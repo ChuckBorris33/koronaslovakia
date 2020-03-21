@@ -5,7 +5,7 @@
         <h1 class="text-uppercase">Koronavírus na slovensku</h1>
       </div>
       <div class="w-100 row">
-        <div class="col-3">
+        <div class="col-3 d-none d-md-block">
           <ul id="main-navigation" class="nav flex-column">
             <li class="nav-item">
               <a class="nav-link active" href="#infected-count">
@@ -19,7 +19,7 @@
             </li>
           </ul>
         </div>
-        <div class="col-9">
+        <div class="col-md-9 col-12">
           <div>
             <InfectedLogChart
               id="infected-count"
@@ -56,11 +56,8 @@ export default class App extends Vue {}
 @import "~c3/c3.css";
 @import "~bootstrap/scss/bootstrap";
 
-.container {
-  margin-top: 4em;
-}
-
 .title {
+  padding-top: 4em;
   padding-bottom: 4em;
 }
 

@@ -34,14 +34,22 @@ export default class InfectedLogChart extends Vue {
         type: "line",
         x: "Dátum",
         xFormat: "%Y-%m-%d",
-        rows: [["Dátum", this.title], ...this.chartDataRows]
+        rows: [["Dátum", this.title], ...this.chartDataRows],
+        labels: true
       },
       axis: {
         x: {
           type: "timeseries",
           tick: {
             format: "%d.%m",
-            culling: false
+            rotate: -60,
+            culling: {
+              max: 16
+            }
+          },
+          padding: {
+            left: 3600000 * 12, // 12 hours
+            right: 3600000 * 12 // 12 hours
           }
         }
       },
