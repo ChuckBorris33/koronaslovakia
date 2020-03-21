@@ -1,6 +1,5 @@
-# Pool stats
+# Korona stats
 
-Small application for scrapping visitor count from webpage of public pool in Petržalka and
-displaying it in graph.
+Small application for scrapping and displaying statistics about corona virus cases in Slovakia. Data is scrapped from official government site www.korona.gov.sk
 
-App is running at www.poolstats.borko.rocks
+App is running at www.korona.zalman.online

@@ -1,4 +1,4 @@
-# plavaren_front
+# Koronastats frontend
 
 ## Project setup
 ```

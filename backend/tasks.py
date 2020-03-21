@@ -13,7 +13,7 @@ def _build_backend(c):
 
 
 def _build_frontend(c):
-    c.run("rm -r dist")
+    c.run("rm -rf dist")
     c.run("poetry build -f wheel")
 
 
