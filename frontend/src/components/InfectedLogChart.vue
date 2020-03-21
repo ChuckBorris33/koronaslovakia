@@ -5,7 +5,7 @@
 </template>
 
 <script lang="ts">
-import c3, { ChartConfiguration, Primitive } from "c3";
+import c3, { ChartConfiguration } from "c3";
 import { format } from "date-fns";
 import { Component, Vue, Prop } from "vue-property-decorator";
 import { fetchInfectedLog } from "@/api";
