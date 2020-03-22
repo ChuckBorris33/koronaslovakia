@@ -20,5 +20,6 @@ export default class ChartLayout extends Vue {
 <style lang="scss">
 .chart {
   margin-bottom: 4em;
+  min-height: 250px;
 }
 </style>

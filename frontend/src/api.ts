@@ -1,6 +1,6 @@
 import axiosPackage, { AxiosResponse } from "axios";
 import { setupCache } from "axios-cache-adapter";
-import { InfectedLogResult } from "@/types";
+import { InfectedIncreaseLogResult, InfectedLogResult } from "@/types";
 
 const cache = setupCache({
   maxAge: 15 * 60 * 1000
@@ -15,6 +15,12 @@ export async function fetchInfectedLog(): Promise<
   AxiosResponse<InfectedLogResult>
 > {
   return await axios.get(`/infected_log/`);
+}
+
+export async function fetchInfectedIncreaseLog(): Promise<
+  AxiosResponse<InfectedIncreaseLogResult>
+> {
+  return await axios.get(`/infected_increase_log/`);
 }
 
 export default axios;

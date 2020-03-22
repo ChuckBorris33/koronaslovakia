@@ -7,9 +7,9 @@
 <script lang="ts">
 import c3, { ChartConfiguration } from "c3";
 import { format } from "date-fns";
-import { Component, Vue, Prop } from "vue-property-decorator";
-import { fetchInfectedLog } from "@/api";
-import { InfectedLog, InfectedLogDataKey } from "@/types";
+import { Component, Vue } from "vue-property-decorator";
+import { fetchInfectedIncreaseLog } from "@/api";
+import { InfectedIncreaseLog } from "@/types";
 import ChartLayout from "@/components/ChartLayout.vue";
 
 @Component({
@@ -17,25 +17,23 @@ import ChartLayout from "@/components/ChartLayout.vue";
     ChartLayout
   }
 })
-export default class InfectedLogChart extends Vue {
-  @Prop({ type: String, required: true })
-  private title!: string;
-  @Prop({ type: String, required: true })
-  private graphId!: string;
-  @Prop({ type: String, required: true })
-  private dataKey!: InfectedLogDataKey;
+export default class TestsPerDayChart extends Vue {
+  private title = "Výsledky testov za deň";
+  private graphId = "infected-increase-chart";
 
-  private infectedLog: InfectedLog[] = [];
+  private infectedLog: InfectedIncreaseLog[] = [];
 
   private get chartConfig(): ChartConfiguration {
     return {
       bindto: `#${this.graphId}`,
       data: {
-        type: "line",
+        type: "bar",
         x: "Dátum",
         xFormat: "%Y-%m-%d",
-        rows: [["Dátum", this.title], ...this.chartDataRows],
-        labels: true
+        rows: [["Dátum", "Pozitívne", "Negatívne"], ...this.chartDataRows],
+        labels: true,
+        groups: [["Pozitívne", "Negatívne"]],
+        hide: ["Spolu"]
       },
       axis: {
         x: {
@@ -50,12 +48,6 @@ export default class InfectedLogChart extends Vue {
           padding: {
             left: 3600000 * 12, // 12 hours
             right: 3600000 * 12 // 12 hours
-          }
-        },
-        y: {
-          min: 0,
-          padding: {
-            bottom: 10
           }
         }
       },
@@ -76,21 +68,26 @@ export default class InfectedLogChart extends Vue {
     id: string,
     index: number
   ): string {
-    const lastValue: number = index
-      ? (this.chartDataRows[index - 1][1] as number)
-      : 0;
-    return `${value} (+${value - lastValue})`;
+    const testsTotal =
+      (this.chartDataRows[index][1] as number) +
+      (this.chartDataRows[index][2] as number);
+    const percentage = Math.round((value / testsTotal) * 10000) / 100;
+    return `${value} (${percentage}%)`;
   }
 
   private get chartDataRows() {
     return this.infectedLog.map(item => {
       const date = new Date(item.datetime);
-      return [format(date, "yyyy-MM-dd"), item[this.dataKey] as number];
+      return [
+        format(date, "yyyy-MM-dd"),
+        item.infected_increase,
+        item.tests_increase - item.infected_increase
+      ];
     });
   }
 
   async mounted() {
-    const fetchResult = await fetchInfectedLog();
+    const fetchResult = await fetchInfectedIncreaseLog();
     this.infectedLog = fetchResult?.data?.results || [];
     c3.generate(this.chartConfig);
   }

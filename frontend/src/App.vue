@@ -17,6 +17,11 @@
                 Počet testov
               </a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#results-per-day">
+                Výsledky testov za deň
+              </a>
+            </li>
           </ul>
         </div>
         <div class="col-md-9 col-12">
@@ -33,6 +38,7 @@
               title="Počet testov"
               data-key="tests"
             />
+            <InfectedIncreaseChart id="results-per-day" />
           </div>
         </div>
       </div>
@@ -43,9 +49,11 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import InfectedLogChart from "@/components/InfectedLogChart.vue";
+import InfectedIncreaseChart from "@/components/TestsPerDayChart.vue";
 
 @Component({
   components: {
+    InfectedIncreaseChart,
     InfectedLogChart
   }
 })
