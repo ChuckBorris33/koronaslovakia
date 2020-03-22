@@ -12,6 +12,7 @@ FORMAT = '%(asctime)-15s %(message)s'
 logging.basicConfig(format=FORMAT)
 logger = logging.getLogger(__name__)
 
+
 def get_corona_counts():
     try:
         result = requests.get("https://www.korona.gov.sk/")

@@ -4,6 +4,7 @@ from flask_script import Manager
 
 from coronastats import db
 from coronastats.server import create_app
+from coronastats.scrapper import get_corona_counts
 
 manager = Manager(create_app)
 
@@ -35,6 +36,11 @@ def add_initial_data():
     fields = [db.CoronaLog.datetime, db.CoronaLog.infected, db.CoronaLog.tests]
     with db.database.atomic():
         db.CoronaLog.insert_many(data, fields=fields).execute()
+
+
+@manager.command
+def scrap_today_counts():
+    get_corona_counts()
 
 
 if __name__ == "__main__":

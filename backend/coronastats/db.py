@@ -19,9 +19,9 @@ class CoronaLog(Model):
 
 
 def add_corona_log(infected: int, cured: int, tests: int, deaths: int = 0) -> CoronaLog:
-    created = CoronaLog.create(
+    created = CoronaLog.insert(
         infected=infected, cured=cured, tests=tests, deaths=deaths
-    )
+    ).on_conflict_replace().execute()
     return created
 
 
