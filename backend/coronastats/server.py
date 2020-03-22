@@ -16,6 +16,11 @@ def create_app():
         results = db.get_infected_log()
         return {"results": list(results)}
 
+    @app.route("/api/infected_increase_log/", methods=["GET"])
+    def infected_increase_log():
+        results = db.get_infected_increase_log()
+        return {"results": list(results)}
+
     return app
 
 

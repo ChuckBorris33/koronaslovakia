@@ -1,7 +1,7 @@
 import datetime
 import typing
 
-from peewee import SqliteDatabase, Model, DateField, AutoField, IntegerField
+from peewee import SqliteDatabase, Model, DateField, AutoField, IntegerField, JOIN, fn, Value
 
 database = SqliteDatabase("../app.db")
 
@@ -19,7 +19,9 @@ class CoronaLog(Model):
 
 
 def add_corona_log(infected: int, cured: int, tests: int, deaths: int = 0) -> CoronaLog:
-    created = CoronaLog.create(infected=infected, cured=cured, tests=tests, deaths=deaths)
+    created = CoronaLog.create(
+        infected=infected, cured=cured, tests=tests, deaths=deaths
+    )
     return created
 
 
@@ -32,3 +34,24 @@ def get_infected_log() -> typing.Iterable[dict]:
         CoronaLog.deaths,
     ).dicts()
 
+
+def get_infected_increase_log() -> typing.Iterable[dict]:
+    CoronaLogPrevieous = CoronaLog.alias()
+    previous_query = CoronaLogPrevieous.select()
+    previous_query = previous_query.alias("clp")
+
+    return (
+        CoronaLog.select(
+            CoronaLog.datetime,
+            Value(CoronaLog.infected - fn.COALESCE(previous_query.c.infected, 0)).alias("infected_increase"),
+            Value(CoronaLog.cured - fn.COALESCE(previous_query.c.cured, 0)).alias("cured_increase"),
+            Value(CoronaLog.tests - fn.COALESCE(previous_query.c.tests, 0)).alias("tests_increase"),
+            Value(CoronaLog.deaths - fn.COALESCE(previous_query.c.deaths, 0)).alias("deaths_increase"),
+        )
+        .join(
+            previous_query,
+            JOIN.LEFT_OUTER,
+            on=(previous_query.c.id == CoronaLog.id - 1),
+        )
+        .dicts()
+    )
