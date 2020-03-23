@@ -39,8 +39,9 @@ def add_initial_data():
 
 
 @manager.command
-def scrap_today_counts():
-    get_corona_counts()
+def scrap_last_day_counts():
+    last_date = db.get_last_log_date()
+    get_corona_counts(last_date)
 
 
 if __name__ == "__main__":

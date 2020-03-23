@@ -1,7 +1,16 @@
 import datetime
 import typing
 
-from peewee import SqliteDatabase, Model, DateField, AutoField, IntegerField, JOIN, fn, Value
+from peewee import (
+    SqliteDatabase,
+    Model,
+    DateField,
+    AutoField,
+    IntegerField,
+    JOIN,
+    fn,
+    Value,
+)
 
 database = SqliteDatabase("../app.db")
 
@@ -18,11 +27,32 @@ class CoronaLog(Model):
         database = database
 
 
-def add_corona_log(infected: int, cured: int, tests: int, deaths: int = 0) -> CoronaLog:
-    created = CoronaLog.insert(
-        infected=infected, cured=cured, tests=tests, deaths=deaths
-    ).on_conflict_replace().execute()
+def add_corona_log(
+    infected: int,
+    cured: int,
+    tests: int,
+    deaths: int = 0,
+    date_: typing.Optional[datetime.date] = None,
+) -> CoronaLog:
+    if not date_:
+        date_ = datetime.date.today()
+    created = (
+        CoronaLog.insert(
+            infected=infected, cured=cured, tests=tests, deaths=deaths, datetime=date_
+        )
+        .on_conflict_replace()
+        .execute()
+    )
     return created
+
+
+def get_last_log_date() -> datetime.date:
+    return (
+        CoronaLog.select(CoronaLog.datetime)
+        .order_by(CoronaLog.datetime.desc())
+        .get()
+        .datetime
+    )
 
 
 def get_infected_log() -> typing.Iterable[dict]:
@@ -43,10 +73,18 @@ def get_infected_increase_log() -> typing.Iterable[dict]:
     return (
         CoronaLog.select(
             CoronaLog.datetime,
-            Value(CoronaLog.infected - fn.COALESCE(previous_query.c.infected, 0)).alias("infected_increase"),
-            Value(CoronaLog.cured - fn.COALESCE(previous_query.c.cured, 0)).alias("cured_increase"),
-            Value(CoronaLog.tests - fn.COALESCE(previous_query.c.tests, 0)).alias("tests_increase"),
-            Value(CoronaLog.deaths - fn.COALESCE(previous_query.c.deaths, 0)).alias("deaths_increase"),
+            Value(CoronaLog.infected - fn.COALESCE(previous_query.c.infected, 0)).alias(
+                "infected_increase"
+            ),
+            Value(CoronaLog.cured - fn.COALESCE(previous_query.c.cured, 0)).alias(
+                "cured_increase"
+            ),
+            Value(CoronaLog.tests - fn.COALESCE(previous_query.c.tests, 0)).alias(
+                "tests_increase"
+            ),
+            Value(CoronaLog.deaths - fn.COALESCE(previous_query.c.deaths, 0)).alias(
+                "deaths_increase"
+            ),
         )
         .join(
             previous_query,
