@@ -9,6 +9,7 @@ import requests
 import schedule
 
 from coronastats import db
+from coronastats.cache import clear_cache
 
 logger = logging.getLogger()
 logger.setLevel(os.getenv("LOGLEVEL", logging.INFO))
@@ -45,6 +46,7 @@ def get_corona_counts(last_date: date):
                 deaths=deaths,
                 date_=updated_at,
             )
+            clear_cache()
             logger.info(f"Scrapped {infected}, {tested}, Cancelling job for today")
             return schedule.CancelJob
         else:
