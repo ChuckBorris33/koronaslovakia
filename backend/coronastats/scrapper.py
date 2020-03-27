@@ -14,7 +14,7 @@ logger = logging.getLogger()
 logger.setLevel(os.getenv("LOGLEVEL", logging.INFO))
 ch = logging.StreamHandler()
 ch.setLevel(os.getenv("LOGLEVEL", logging.INFO))
-formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
 ch.setFormatter(formatter)
 logger.addHandler(ch)
 
@@ -30,12 +30,20 @@ def get_corona_counts(last_date: date):
         data = json.loads(result.text)
         infected_data = data["tiles"]["k26"]["data"]["d"].pop()
         tested_data = data["tiles"]["k25"]["data"]["d"].pop()
+        cured_data = data["tiles"]["k34"]["data"]["d"].pop()
+        deaths_data = data["tiles"]["k35"]["data"]["d"].pop()
         updated_at = datetime.strptime(infected_data["d"], "%y%m%d").date()
         if updated_at > last_date:
             infected = int(infected_data["v"])
             tested = int(tested_data["v"]) + infected
+            cured = int(cured_data["v"])
+            deaths = int(deaths_data["v"])
             db.add_corona_log(
-                infected=infected, cured=0, tests=tested, deaths=0, date_=updated_at
+                infected=infected,
+                cured=cured,
+                tests=tested,
+                deaths=deaths,
+                date_=updated_at,
             )
             logger.info(f"Scrapped {infected}, {tested}, Cancelling job for today")
             return schedule.CancelJob
