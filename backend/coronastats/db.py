@@ -46,6 +46,10 @@ def add_corona_log(
     return created
 
 
+def get_log_by_date(log_date):
+    return CoronaLog.get_or_create(datetime=log_date)
+
+
 def get_last_log_date() -> datetime.date:
     return (
         CoronaLog.select(CoronaLog.datetime)
