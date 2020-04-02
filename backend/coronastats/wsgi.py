@@ -1,4 +1,4 @@
-from coronastats.server import create_app
+from coronastats import create_app
 
 app = create_app()
 

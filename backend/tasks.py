@@ -29,6 +29,8 @@ def load_context(c):
         c.server.url = input("Production SSH url:")
     if "remote_dir" not in c.server:
         c.server.remote_dir = input("Remote directory:")
+    if "secret_key" not in c.server:
+        c.server.remote_dir = input("Remote secret_key:")
     if "connection" not in c.server:
         c.server.connection = Connection(c.server["url"])
 
@@ -39,10 +41,12 @@ def release(c):
     wheel_path = glob.glob("dist/*.whl")[0]
     wheel_name = os.path.basename(wheel_path)
     remote_dir = c.server.remote_dir
+    secret_key = c.server.secret_key
     with server.cd(remote_dir):
         server.put(wheel_path, remote=os.path.join(remote_dir, "backend", wheel_name))
         with server.cd("backend"):
             server.run("python3 -m virtualenv --clear .venv")
+            server.run(f"echo \"export CORONASTATS_SECRET_KEY={secret_key}\" >> .venv/bin/activate")
             with server.prefix("source .venv/bin/activate"):
                 server.run(f"pip3 install {wheel_name}")
             server.run(f"rm {wheel_name}")

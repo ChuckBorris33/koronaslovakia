@@ -1,24 +1,3 @@
-Skip to content
-Search or jump to…
-
-Pull requests
-Issues
-Marketplace
-Explore
-
-@ChuckBorris33
-github
-/
-gitignore
-3k
-96.2k50.8k
- Code Pull requests 130 Actions Projects 0 Security Insights
-gitignore/Python.gitignore
-@huxuan huxuan Add `cover/` to Python.gitignore. (#3310)
-83ff6af 19 days ago
-@arcresu@shiftkey@Lucretiel@Harrison-G@jwg4@GabrielC101@misaelnieto@pmsosa@svkampen@vltr@thedrow@matheussl@hugovk@ghisvail@EvandroLG@DSIW@amigcamel@toanant@2Cubed@brettcannon@weinihou@Visgean@nvie@skuschel@sigo@sethmlarson
-135 lines (110 sloc)  1.96 KB
-
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

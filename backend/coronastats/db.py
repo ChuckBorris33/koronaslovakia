@@ -1,6 +1,7 @@
 import datetime
 import typing
 
+from flask import current_app
 from peewee import (
     SqliteDatabase,
     Model,
@@ -12,7 +13,7 @@ from peewee import (
     Value,
 )
 
-database = SqliteDatabase("../app.db")
+database = SqliteDatabase(current_app.config["DATABASE_PATH"])
 
 
 class CoronaLog(Model):

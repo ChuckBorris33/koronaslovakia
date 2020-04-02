@@ -8,8 +8,7 @@ from datetime import date, datetime
 import requests
 import schedule
 
-from coronastats import db
-from coronastats.cache import clear_cache
+from coronastats import db, cache
 
 logger = logging.getLogger()
 logger.setLevel(os.getenv("LOGLEVEL", logging.INFO))
@@ -46,7 +45,7 @@ def get_corona_counts(last_date: date):
                 deaths=deaths,
                 date_=updated_at,
             )
-            clear_cache()
+            cache.clear()
             logger.info(f"Scrapped {infected}, {tested}, Cancelling job for today")
             return schedule.CancelJob
         else:
@@ -65,7 +64,7 @@ def start_trying_to_get_corona_counts():
         raise
 
 
-if __name__ == "__main__":
+def run():
     schedule.every().day.at("09:00").do(start_trying_to_get_corona_counts)
     logging.info("Coronastat scrapper started")
     while True:
