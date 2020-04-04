@@ -20,14 +20,14 @@ def get_corona_counts(last_date: date):
                 "Unable to fetch data from https://virus-korona.sk/api.php"
             )
         data = json.loads(result.text)
-        infected_data = data["tiles"]["k26"]["data"]["d"].pop()
-        tested_data = data["tiles"]["k25"]["data"]["d"].pop()
-        cured_data = data["tiles"]["k34"]["data"]["d"].pop()
-        deaths_data = data["tiles"]["k35"]["data"]["d"].pop()
+        infected_data = data["tiles"]["k5"]["data"]["d"].pop()
+        negative_data = data["tiles"]["k6"]["data"]["d"].pop()
+        cured_data = data["tiles"]["k7"]["data"]["d"].pop()
+        deaths_data = data["tiles"]["k8"]["data"]["d"].pop()
         updated_at = datetime.strptime(infected_data["d"], "%y%m%d").date()
         if updated_at > last_date:
             infected = int(infected_data["v"])
-            tested = int(tested_data["v"]) + infected
+            tested = int(negative_data["v"]) + infected
             cured = int(cured_data["v"])
             deaths = int(deaths_data["v"])
             db.add_corona_log(
