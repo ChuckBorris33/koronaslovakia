@@ -1,6 +1,4 @@
 import json
-import logging
-import os
 import sys
 import time
 from datetime import date, datetime
@@ -9,19 +7,13 @@ import requests
 import schedule
 
 from coronastats import db, cache
+from flask import current_app
 
-logger = logging.getLogger()
-logger.setLevel(os.getenv("LOGLEVEL", logging.INFO))
-ch = logging.StreamHandler()
-ch.setLevel(os.getenv("LOGLEVEL", logging.INFO))
-formatter = logging.Formatter("%(asctime)s - %(levelname)s - %(message)s")
-ch.setFormatter(formatter)
-logger.addHandler(ch)
+logger = current_app.logger.getChild("scrapper")
 
 
 def get_corona_counts(last_date: date):
     try:
-        logger.info(f"Trying to scrap new corona stats")
         result = requests.get("https://virus-korona.sk/api.php")
         if result.status_code != 200:
             raise ConnectionError(
@@ -51,7 +43,7 @@ def get_corona_counts(last_date: date):
         else:
             logger.info(f"Stats not updated")
     except Exception as error:
-        logger.error(str(error))
+        logger.exception("Error while scrapping data")
         return schedule.CancelJob
 
 
@@ -66,7 +58,7 @@ def start_trying_to_get_corona_counts():
 
 def run():
     schedule.every().day.at("09:00").do(start_trying_to_get_corona_counts)
-    logging.info("Coronastat scrapper started")
+    logger.info("Coronastat scrapper started")
     while True:
         try:
             schedule.run_pending()
