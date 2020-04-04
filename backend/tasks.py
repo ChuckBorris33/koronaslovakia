@@ -47,6 +47,7 @@ def release(c):
         with server.cd("backend"):
             server.run("python3 -m virtualenv --clear .venv")
             server.run(f"echo \"export CORONASTATS_SECRET_KEY={secret_key}\" >> .venv/bin/activate")
+            server.run(f"echo \"export FLASK_APP=coronastats:create_app\" >> .venv/bin/activate")
             with server.prefix("source .venv/bin/activate"):
                 server.run(f"pip3 install {wheel_name}")
             server.run(f"rm {wheel_name}")
