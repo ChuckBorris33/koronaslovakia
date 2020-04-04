@@ -18,9 +18,9 @@ import { getChartConfig } from "@/utils";
     ChartLayout
   }
 })
-export default class InfectedLogChart extends Vue {
-  private graphId = "cases-over-time-chart";
-  private title = "Počet nakazených";
+export default class TestedChart extends Vue {
+  private title = "Počet testov";
+  private graphId = "tests-chart";
 
   private infectedLog: InfectedLog[] = [];
 
@@ -28,9 +28,7 @@ export default class InfectedLogChart extends Vue {
     return getChartConfig({
       bindto: `#${this.graphId}`,
       data: {
-        rows: [["Dátum", "Nakazených", "Aktívnych"], ...this.chartDataRows],
-        labels: false,
-        hide: ["Aktívnych"]
+        rows: [["Dátum", this.title], ...this.chartDataRows]
       },
       tooltip: {
         format: {
@@ -55,14 +53,7 @@ export default class InfectedLogChart extends Vue {
   private get chartDataRows() {
     return this.infectedLog.map(item => {
       const date = new Date(item.datetime);
-      const dateString: string = format(date, "yyyy-MM-dd");
-      return [
-        dateString,
-        item[InfectedLogDataKey.INFECTED],
-        item[InfectedLogDataKey.INFECTED] -
-          item[InfectedLogDataKey.CURED] -
-          item[InfectedLogDataKey.DEATHS]
-      ];
+      return [format(date, "yyyy-MM-dd"), item[InfectedLogDataKey.TESTS]];
     });
   }
 
