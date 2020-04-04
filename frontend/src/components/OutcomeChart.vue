@@ -33,7 +33,7 @@ export default class OutcomeChart extends Vue {
       },
       tooltip: {
         format: {
-          value: getTooltipWithIncreaseFormatter(this.chartDataRows)
+          value: getTooltipWithIncreaseFormatter(rows)
         }
       }
     });

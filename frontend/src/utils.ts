@@ -44,18 +44,16 @@ export function getChartConfig(config: ChartConfiguration): ChartConfiguration {
   return _.merge(basicConfig, config);
 }
 
-export function getTooltipWithIncreaseFormatter(
-  chartDataRows: PrimitiveArray[]
-) {
+export function getTooltipWithIncreaseFormatter(chartRows: PrimitiveArray[]) {
   return function(
     value: number,
     ratio: number | undefined,
     id: string,
     index: number
   ): string {
-    const lastValue: number = index
-      ? (chartDataRows[index - 1][1] as number)
-      : 0;
+    const columnId = chartRows[0].indexOf(id);
+    const lastValue: number =
+      index > 0 ? (chartRows[index][columnId] as number) : 0;
     return `${value} (+${value - lastValue})`;
   };
 }

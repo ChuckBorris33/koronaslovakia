@@ -25,14 +25,15 @@ export default class TestedChart extends Vue {
   private infectedLog: InfectedLog[] = [];
 
   private get chartConfig(): ChartConfiguration {
+    const rows = [["Dátum", this.title], ...this.chartDataRows];
     return getChartConfig({
       bindto: `#${this.graphId}`,
       data: {
-        rows: [["Dátum", this.title], ...this.chartDataRows]
+        rows
       },
       tooltip: {
         format: {
-          value: getTooltipWithIncreaseFormatter(this.chartDataRows)
+          value: getTooltipWithIncreaseFormatter(rows)
         }
       }
     });

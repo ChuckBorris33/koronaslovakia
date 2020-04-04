@@ -25,16 +25,16 @@ export default class InfectedLogChart extends Vue {
   private infectedLog: InfectedLog[] = [];
 
   private get chartConfig(): ChartConfiguration {
+    const rows = [["Dátum", "Nakazených", "Aktívnych"], ...this.chartDataRows];
     return getChartConfig({
       bindto: `#${this.graphId}`,
       data: {
-        rows: [["Dátum", "Nakazených", "Aktívnych"], ...this.chartDataRows],
-        labels: false,
+        rows,
         hide: ["Aktívnych"]
       },
       tooltip: {
         format: {
-          value: getTooltipWithIncreaseFormatter(this.chartDataRows)
+          value: getTooltipWithIncreaseFormatter(rows)
         }
       }
     });

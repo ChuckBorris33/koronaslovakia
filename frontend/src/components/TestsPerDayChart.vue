@@ -36,6 +36,14 @@ export default class TestsPerDayChart extends Vue {
         format: {
           value: this.tooltipValue
         }
+      },
+      axis: {
+        y: {
+          min: 0,
+          padding: {
+            bottom: 0
+          }
+        }
       }
     });
   }
