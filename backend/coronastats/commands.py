@@ -1,5 +1,6 @@
 import datetime
 
+import click
 from coronastats import db, scrapper, cache
 from coronastats.scrapper import get_corona_counts
 from flask import current_app
@@ -19,7 +20,12 @@ def scrap_last_day_counts():
 
 
 @app.cli.command("edit_log")
-def edit_log(date=None, infected=None, tests=None, cured=None, killed=None):
+@click.option('--date', default=None, help='Date of log')
+@click.option('-i', '--infected', default=None, help='Number of infected.')
+@click.option('-t', '--tests', default=None, help='Number of tests.')
+@click.option('-c', '--cured', default=None, help='Number of cured.')
+@click.option('-d', '--deaths', default=None, help='Number of deaths.')
+def edit_log(date=None, infected=None, tests=None, cured=None, deaths=None):
     log_date = (
         datetime.datetime.strptime(date, "%Y-%m-%d").date()
         if date
@@ -32,8 +38,8 @@ def edit_log(date=None, infected=None, tests=None, cured=None, killed=None):
         log.tests = tests
     if cured:
         log.cured = cured
-    if killed:
-        log.deaths = killed
+    if deaths:
+        log.deaths = deaths
     log.save()
     cache.clear()
 
