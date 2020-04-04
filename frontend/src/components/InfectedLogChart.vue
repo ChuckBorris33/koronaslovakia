@@ -11,6 +11,7 @@ import { Component, Vue, Prop } from "vue-property-decorator";
 import { fetchInfectedLog } from "@/api";
 import { InfectedLog, InfectedLogDataKey } from "@/types";
 import ChartLayout from "@/components/ChartLayout.vue";
+import { getChartConfig } from "@/utils";
 
 @Component({
   components: {
@@ -28,46 +29,17 @@ export default class InfectedLogChart extends Vue {
   private infectedLog: InfectedLog[] = [];
 
   private get chartConfig(): ChartConfiguration {
-    return {
+    return getChartConfig({
       bindto: `#${this.graphId}`,
       data: {
-        type: "line",
-        x: "Dátum",
-        xFormat: "%Y-%m-%d",
-        rows: [["Dátum", this.title], ...this.chartDataRows],
-        labels: true
-      },
-      axis: {
-        x: {
-          type: "timeseries",
-          tick: {
-            format: "%d.%m",
-            rotate: -60,
-            culling: {
-              max: 16
-            }
-          },
-          padding: {
-            left: 3600000 * 12, // 12 hours
-            right: 3600000 * 12 // 12 hours
-          }
-        },
-        y: {
-          min: 0,
-          padding: {
-            bottom: 10
-          }
-        }
+        rows: [["Dátum", this.title], ...this.chartDataRows]
       },
       tooltip: {
         format: {
-          title(x: Date): string {
-            return format(x, "dd.MM.yyyy");
-          },
           value: this.tooltipValue
         }
       }
-    };
+    });
   }
 
   private tooltipValue(

@@ -11,6 +11,7 @@ import { Component, Vue } from "vue-property-decorator";
 import { fetchInfectedIncreaseLog } from "@/api";
 import { InfectedIncreaseLog } from "@/types";
 import ChartLayout from "@/components/ChartLayout.vue";
+import { getChartConfig } from "@/utils";
 
 @Component({
   components: {
@@ -24,42 +25,19 @@ export default class TestsPerDayChart extends Vue {
   private infectedLog: InfectedIncreaseLog[] = [];
 
   private get chartConfig(): ChartConfiguration {
-    return {
+    return getChartConfig({
       bindto: `#${this.graphId}`,
       data: {
         type: "bar",
-        x: "Dátum",
-        xFormat: "%Y-%m-%d",
         rows: [["Dátum", "Pozitívne", "Negatívne"], ...this.chartDataRows],
-        labels: true,
-        groups: [["Pozitívne", "Negatívne"]],
-        hide: ["Spolu"]
-      },
-      axis: {
-        x: {
-          type: "timeseries",
-          tick: {
-            format: "%d.%m",
-            rotate: -60,
-            culling: {
-              max: 16
-            }
-          },
-          padding: {
-            left: 3600000 * 12, // 12 hours
-            right: 3600000 * 12 // 12 hours
-          }
-        }
+        groups: [["Pozitívne", "Negatívne"]]
       },
       tooltip: {
         format: {
-          title(x: Date): string {
-            return format(x, "dd.MM.yyyy");
-          },
           value: this.tooltipValue
         }
       }
-    };
+    });
   }
 
   private tooltipValue(
