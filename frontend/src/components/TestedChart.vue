@@ -11,7 +11,7 @@ import { Component, Vue } from "vue-property-decorator";
 import { fetchInfectedLog } from "@/api";
 import { InfectedLog, InfectedLogDataKey } from "@/types";
 import ChartLayout from "@/components/ChartLayout.vue";
-import { getChartConfig } from "@/utils";
+import { getChartConfig, getTooltipWithIncreaseFormatter } from "@/utils";
 
 @Component({
   components: {
@@ -32,22 +32,10 @@ export default class TestedChart extends Vue {
       },
       tooltip: {
         format: {
-          value: this.tooltipValue
+          value: getTooltipWithIncreaseFormatter(this.chartDataRows)
         }
       }
     });
-  }
-
-  private tooltipValue(
-    value: number,
-    ratio: number | undefined,
-    id: string,
-    index: number
-  ): string {
-    const lastValue: number = index
-      ? (this.chartDataRows[index - 1][1] as number)
-      : 0;
-    return `${value} (+${value - lastValue})`;
   }
 
   private get chartDataRows() {

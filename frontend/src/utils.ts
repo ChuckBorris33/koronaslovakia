@@ -1,6 +1,6 @@
 import _ from "lodash";
 import { format } from "date-fns";
-import { ChartConfiguration } from "c3";
+import { ChartConfiguration, PrimitiveArray } from "c3";
 
 export function getChartConfig(config: ChartConfiguration): ChartConfiguration {
   const basicConfig = {
@@ -42,4 +42,20 @@ export function getChartConfig(config: ChartConfiguration): ChartConfiguration {
     }
   };
   return _.merge(basicConfig, config);
+}
+
+export function getTooltipWithIncreaseFormatter(
+  chartDataRows: PrimitiveArray[]
+) {
+  return function(
+    value: number,
+    ratio: number | undefined,
+    id: string,
+    index: number
+  ): string {
+    const lastValue: number = index
+      ? (chartDataRows[index - 1][1] as number)
+      : 0;
+    return `${value} (+${value - lastValue})`;
+  };
 }

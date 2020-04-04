@@ -5,13 +5,13 @@
 </template>
 
 <script lang="ts">
-import c3, { ChartConfiguration } from "c3";
+import c3, { ChartConfiguration, PrimitiveArray } from "c3";
 import { format } from "date-fns";
 import { Component, Vue } from "vue-property-decorator";
 import { fetchInfectedLog } from "@/api";
 import { InfectedLog, InfectedLogDataKey } from "@/types";
 import ChartLayout from "@/components/ChartLayout.vue";
-import { getChartConfig } from "@/utils";
+import { getChartConfig, getTooltipWithIncreaseFormatter } from "@/utils";
 
 @Component({
   components: {
@@ -34,25 +34,13 @@ export default class InfectedLogChart extends Vue {
       },
       tooltip: {
         format: {
-          value: this.tooltipValue
+          value: getTooltipWithIncreaseFormatter(this.chartDataRows)
         }
       }
     });
   }
 
-  private tooltipValue(
-    value: number,
-    ratio: number | undefined,
-    id: string,
-    index: number
-  ): string {
-    const lastValue: number = index
-      ? (this.chartDataRows[index - 1][1] as number)
-      : 0;
-    return `${value} (+${value - lastValue})`;
-  }
-
-  private get chartDataRows() {
+  private get chartDataRows(): PrimitiveArray[] {
     return this.infectedLog.map(item => {
       const date = new Date(item.datetime);
       const dateString: string = format(date, "yyyy-MM-dd");
