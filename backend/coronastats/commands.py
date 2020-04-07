@@ -15,8 +15,7 @@ def prepare_database():
 
 @app.cli.command("scrap_last_day_counts")
 def scrap_last_day_counts():
-    last_date = db.get_last_log_date()
-    get_corona_counts(last_date)
+    get_corona_counts()
 
 
 @app.cli.command("edit_log")

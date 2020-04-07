@@ -1,6 +1,7 @@
 import json
 import sys
 import time
+import typing
 from datetime import date, datetime
 
 import requests
@@ -12,7 +13,7 @@ from flask import current_app
 logger = current_app.logger.getChild("scrapper")
 
 
-def get_corona_counts(last_date: date):
+def get_corona_counts(last_date: typing.Optional[date] = None):
     try:
         result = requests.get("https://virus-korona.sk/api.php")
         if result.status_code != 200:
@@ -25,7 +26,7 @@ def get_corona_counts(last_date: date):
         cured_data = data["tiles"]["k7"]["data"]["d"].pop()
         deaths_data = data["tiles"]["k8"]["data"]["d"].pop()
         updated_at = datetime.strptime(infected_data["d"], "%y%m%d").date()
-        if updated_at > last_date:
+        if last_date is None or updated_at > last_date:
             infected = int(infected_data["v"])
             tested = int(negative_data["v"]) + infected
             cured = int(cured_data["v"])
@@ -38,8 +39,9 @@ def get_corona_counts(last_date: date):
                 date_=updated_at,
             )
             cache.clear()
-            logger.info(f"Scrapped {infected}, {tested}, Cancelling job for today")
-            return schedule.CancelJob
+            if last_date is not None and updated_at > last_date:
+                logger.info(f"Scrapped {infected}, {tested}, Cancelling job for today")
+                return schedule.CancelJob
         else:
             logger.info(f"Stats not updated")
     except Exception as error:
