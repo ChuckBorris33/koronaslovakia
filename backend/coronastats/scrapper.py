@@ -49,6 +49,33 @@ def get_corona_counts(last_date: typing.Optional[date] = None):
         return schedule.CancelJob
 
 
+def get_location_data():
+    try:
+        result = requests.get("https://mapa.covid.chat/map_data")
+        if result.status_code != 200:
+            raise ConnectionError(
+                "Unable to fetch data from https://mapa.covid.chat/map_data"
+            )
+        with db.database.atomic():
+            for record in json.loads(result.text)["map"]:
+                title = record["title"]
+                last_updated = datetime.fromtimestamp(int(record["last_occurrence_timestamp"])).date()
+                location, _ = db.CoronaLocation.get_or_create(location=title)
+                location.last_updated = last_updated
+                location.save()
+
+                location_log, _ = db.CoronaLocationLog.get_or_create(location=location, date=datetime.today())
+                location_log.infected = record["amount"]["infected"]
+                location_log.infected_females = record["females"]
+                location_log.cured = record["amount"]["recovered"]
+                location_log.deaths = record["amount"]["deaths"]
+                location_log.save()
+        cache.clear()
+    except Exception:
+        logger.exception("Error while scrapping data")
+        return schedule.CancelJob
+
+
 def start_trying_to_get_corona_counts():
     try:
         last_date = db.get_last_log_date()
@@ -60,6 +87,7 @@ def start_trying_to_get_corona_counts():
 
 def run():
     schedule.every().day.at("09:00").do(start_trying_to_get_corona_counts)
+    schedule.every().hour.do(get_location_data)
     logger.info("Coronastat scrapper started")
     while True:
         try:

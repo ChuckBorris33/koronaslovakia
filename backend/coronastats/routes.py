@@ -17,3 +17,10 @@ def infected_log():
 def infected_increase_log():
     results = db.get_infected_increase_log()
     return {"results": list(results)}
+
+
+@app.route("/api/get_last_location_log/", methods=["GET"])
+@cache.cached(timeout=3600)
+def get_last_location_log():
+    results = db.get_last_location_log()
+    return {"results": list(results)}

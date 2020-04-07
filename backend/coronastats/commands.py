@@ -2,7 +2,7 @@ import datetime
 
 import click
 from coronastats import db, scrapper, cache
-from coronastats.scrapper import get_corona_counts
+from coronastats.scrapper import get_corona_counts, get_location_data
 from flask import current_app
 
 app = current_app
@@ -13,9 +13,19 @@ def prepare_database():
     db.database.create_tables([db.CoronaLog])
 
 
+@app.cli.command("prepare_location_database")
+def prepare_location_database():
+    db.database.create_tables([db.CoronaLocationLog, db.CoronaLocation])
+
+
 @app.cli.command("scrap_last_day_counts")
 def scrap_last_day_counts():
     get_corona_counts()
+
+
+@app.cli.command("scrap_location_counts")
+def scrap_location_counts():
+    get_location_data()
 
 
 @app.cli.command("edit_log")

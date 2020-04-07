@@ -11,12 +11,19 @@ from peewee import (
     JOIN,
     fn,
     Value,
+    CharField,
+    ForeignKeyField,
 )
 
 database = SqliteDatabase(current_app.config["DATABASE_PATH"])
 
 
-class CoronaLog(Model):
+class BaseModel(Model):
+    class Meta:
+        database = database
+
+
+class CoronaLog(BaseModel):
     id = AutoField()
     datetime = DateField(default=datetime.date.today(), unique=True, index=True)
     infected = IntegerField(default=0)
@@ -24,8 +31,22 @@ class CoronaLog(Model):
     tests = IntegerField(default=0)
     deaths = IntegerField(default=0)
 
-    class Meta:
-        database = database
+
+class CoronaLocation(BaseModel):
+    id = AutoField()
+    location = CharField(index=True)
+    last_updated = DateField(default=datetime.date.today())
+
+
+class CoronaLocationLog(BaseModel):
+    id = AutoField()
+    date = DateField(default=datetime.date.today(), index=True)
+    infected = IntegerField(default=0)
+    infected_females = IntegerField(default=0)
+    cured = IntegerField(default=0)
+    tests = IntegerField(default=0)
+    deaths = IntegerField(default=0)
+    location = ForeignKeyField(CoronaLocation, backref="data")
 
 
 def add_corona_log(
@@ -96,5 +117,32 @@ def get_infected_increase_log() -> typing.Iterable[dict]:
             JOIN.LEFT_OUTER,
             on=(previous_query.c.id == CoronaLog.id - 1),
         )
+        .dicts()
+    )
+
+
+def get_last_location_log() -> typing.Iterable[dict]:
+    last_date = (
+        CoronaLocationLog.select(CoronaLocationLog.date)
+        .order_by(CoronaLocationLog.date.desc())
+        .get()
+        .date
+    )
+    return (
+        CoronaLocationLog.select(
+            CoronaLocationLog.date,
+            CoronaLocationLog.infected,
+            CoronaLocationLog.infected_females,
+            Value(
+                CoronaLocationLog.infected - CoronaLocationLog.infected_females
+            ).alias("infected_males"),
+            CoronaLocationLog.cured,
+            CoronaLocationLog.tests,
+            CoronaLocationLog.deaths,
+            CoronaLocation.location,
+            CoronaLocation.last_updated,
+        )
+        .join(CoronaLocation)
+        .where(CoronaLocationLog.date == last_date)
         .dicts()
     )
