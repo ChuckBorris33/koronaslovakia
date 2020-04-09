@@ -40,14 +40,19 @@ export default class OutcomeChart extends Vue {
   }
 
   private get chartDataRows() {
-    return this.infectedLog.map(item => {
-      const date = new Date(item.datetime);
-      return [
-        format(date, "yyyy-MM-dd"),
-        item[InfectedLogDataKey.CURED],
-        item[InfectedLogDataKey.DEATHS]
-      ];
-    });
+    return this.infectedLog
+      .filter(
+        item =>
+          item[InfectedLogDataKey.CURED] || item[InfectedLogDataKey.DEATHS]
+      )
+      .map(item => {
+        const date = new Date(item.datetime);
+        return [
+          format(date, "yyyy-MM-dd"),
+          item[InfectedLogDataKey.CURED],
+          item[InfectedLogDataKey.DEATHS]
+        ];
+      });
   }
 
   async mounted() {
