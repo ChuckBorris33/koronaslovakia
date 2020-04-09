@@ -19,8 +19,8 @@ def infected_increase_log():
     return {"results": list(results)}
 
 
-@app.route("/api/get_last_location_log/", methods=["GET"])
+@app.route("/api/get_last_log_by_location/", methods=["GET"])
 @cache.cached(timeout=3600)
-def get_last_location_log():
-    results = db.get_last_location_log()
-    return {"results": list(results)}
+def get_last_log_by_location():
+    results = db.get_last_log_by_location()
+    return {"results": results}

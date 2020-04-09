@@ -14,6 +14,7 @@ from peewee import (
     CharField,
     ForeignKeyField,
 )
+from playhouse.shortcuts import model_to_dict
 
 database = SqliteDatabase(current_app.config["DATABASE_PATH"])
 
@@ -121,28 +122,35 @@ def get_infected_increase_log() -> typing.Iterable[dict]:
     )
 
 
-def get_last_location_log() -> typing.Iterable[dict]:
-    last_date = (
-        CoronaLocationLog.select(CoronaLocationLog.date)
+def get_last_log_by_location():
+    results = []
+    yesterday = datetime.date.today() - datetime.timedelta(days=1)
+    query = CoronaLocation.select().prefetch(
+        CoronaLocationLog.select()
         .order_by(CoronaLocationLog.date.desc())
-        .get()
-        .date
+        .where(CoronaLocationLog.date >= yesterday)
     )
-    return (
-        CoronaLocationLog.select(
-            CoronaLocationLog.date,
-            CoronaLocationLog.infected,
-            CoronaLocationLog.infected_females,
-            Value(
-                CoronaLocationLog.infected - CoronaLocationLog.infected_females
-            ).alias("infected_males"),
-            CoronaLocationLog.cured,
-            CoronaLocationLog.tests,
-            CoronaLocationLog.deaths,
-            CoronaLocation.location,
-            CoronaLocation.last_updated,
+    for location in query:
+        if len(location.data) == 0:
+            continue
+        last_log = model_to_dict(location.data[0])
+        previous_log = (
+            model_to_dict(location.data[1])
+            if len(location.data) > 1
+            else dict(infected=0, cured=0, deaths=0)
         )
-        .join(CoronaLocation)
-        .where(CoronaLocationLog.date == last_date)
-        .dicts()
-    )
+        results.append(
+            dict(
+                location=location.location,
+                last_updated=location.last_updated,
+                infected=last_log["infected"],
+                cured=last_log["cured"],
+                deaths=last_log["deaths"],
+                infected_delta=last_log["infected"] - previous_log["infected"],
+                cured_delta=last_log["cured"] - previous_log["cured"],
+                deaths_delta=last_log["deaths"] - previous_log["deaths"],
+                infected_females=last_log["infected_females"],
+                infected_males=last_log["infected"] - last_log["infected_females"],
+            )
+        )
+    return results
