@@ -1,6 +1,10 @@
 import axios, { AxiosResponse } from "axios";
 import cachios from "cachios";
-import { InfectedIncreaseLogResult, InfectedLogResult } from "@/types";
+import {
+  InfectedIncreaseLogResult,
+  InfectedLogResult,
+  LastLogByLocationResult
+} from "@/types";
 
 const api = cachios.create(
   axios.create({
@@ -18,6 +22,12 @@ export async function fetchInfectedIncreaseLog(): Promise<
   AxiosResponse<InfectedIncreaseLogResult>
 > {
   return api.get(`/infected_increase_log/`);
+}
+
+export async function fetchLastLogByLocation(): Promise<
+  AxiosResponse<LastLogByLocationResult>
+> {
+  return api.get(`/get_last_log_by_location/`);
 }
 
 export default api;

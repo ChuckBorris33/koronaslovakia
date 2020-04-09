@@ -27,6 +27,11 @@
                 Výsledky testov za deň
               </a>
             </li>
+            <li class="nav-item">
+              <a class="nav-link" href="#by-location-table">
+                Prehľad podľa obcí
+              </a>
+            </li>
           </ul>
         </div>
         <div class="col-md-9 col-12">
@@ -35,6 +40,7 @@
             <OutcomeChart id="outcome-count" />
             <TestedChart id="tested-count" />
             <InfectedIncreaseChart id="results-per-day" />
+            <InfectedByLocationTable id="by-location-table" />
           </div>
         </div>
       </div>
@@ -48,9 +54,11 @@ import InfectedLogChart from "@/components/InfectedLogChart.vue";
 import InfectedIncreaseChart from "@/components/TestsPerDayChart.vue";
 import TestedChart from "@/components/TestedChart.vue";
 import OutcomeChart from "@/components/OutcomeChart.vue";
+import InfectedByLocationTable from "@/components/InfectedByLocationTable.vue";
 
 @Component({
   components: {
+    InfectedByLocationTable,
     OutcomeChart,
     TestedChart,
     InfectedIncreaseChart,
@@ -63,6 +71,7 @@ export default class App extends Vue {}
 <style lang="scss">
 @import "~c3/c3.css";
 @import "~bootstrap/scss/bootstrap";
+@import "~bootstrap-vue/dist/bootstrap-vue.css";
 
 .title {
   padding-top: 4em;
