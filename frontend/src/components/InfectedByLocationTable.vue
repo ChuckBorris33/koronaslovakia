@@ -76,7 +76,8 @@ export default class InfectedByLocationTable extends Vue {
         formatter: value => {
           const date = new Date(value);
           return format(date, "d.M.yyyy");
-        }
+        },
+        sortByFormatted: value => new Date(value)
       }
     ];
   }
