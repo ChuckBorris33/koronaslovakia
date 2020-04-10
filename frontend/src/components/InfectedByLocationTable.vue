@@ -1,5 +1,6 @@
 <template>
   <ChartLayout title="Prehľad podľa obcí">
+    <BFormInput class="col-md-4 mb-3" v-model="filter" placeholder="Hľadať" />
     <BTable
       :fields="fields"
       :items="items"
@@ -11,7 +12,7 @@
     <BPagination
       v-model="page"
       :per-page="perPage"
-      :total-rows="data.length"
+      :total-rows="items.length"
       align="right"
     />
   </ChartLayout>
@@ -21,7 +22,12 @@
 import { Vue, Component } from "vue-property-decorator";
 import { fetchLastLogByLocation } from "@/api";
 import { LastLogByLocation } from "@/types";
-import { BTable, BPagination, BvTableFieldArray } from "bootstrap-vue";
+import {
+  BTable,
+  BPagination,
+  BvTableFieldArray,
+  BFormInput
+} from "bootstrap-vue";
 import ChartLayout from "@/components/ChartLayout.vue";
 import { format } from "date-fns";
 
@@ -29,7 +35,8 @@ import { format } from "date-fns";
   components: {
     ChartLayout,
     BTable,
-    BPagination
+    BPagination,
+    BFormInput
   }
 })
 export default class InfectedByLocationTable extends Vue {
@@ -39,6 +46,7 @@ export default class InfectedByLocationTable extends Vue {
 
   private perPage = 10;
   private page = 1;
+  private filter = "";
 
   private orderBy: { column: string; direction: "asc" | "desc" } = {
     column: "infected",
@@ -91,7 +99,10 @@ export default class InfectedByLocationTable extends Vue {
   }
 
   private get items() {
-    return this.data;
+    return this.data.filter(item => {
+      const filterValue = this.filter.toLowerCase().trim();
+      return item.location.toLowerCase().startsWith(filterValue);
+    });
   }
 
   async mounted() {
