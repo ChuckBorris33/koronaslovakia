@@ -49,27 +49,53 @@ def get_corona_counts(last_date: typing.Optional[date] = None):
         return schedule.CancelJob
 
 
-def get_location_data():
+def _get_or_create_location(
+    title: str, location_map: dict
+) -> (db.CoronaLocation, bool):
+    if title in location_map:
+        return location_map[title], False
+    else:
+        return db.CoronaLocation.create(location=title), True
+
+
+def get_location_data(always_update: bool = False):
     try:
         result = requests.get("https://mapa.covid.chat/map_data")
         if result.status_code != 200:
             raise ConnectionError(
                 "Unable to fetch data from https://mapa.covid.chat/map_data"
             )
-        with db.database.atomic():
-            for record in json.loads(result.text)["map"]:
-                title = record["title"]
-                last_updated = datetime.fromtimestamp(int(record["last_occurrence_timestamp"])).date()
-                location, _ = db.CoronaLocation.get_or_create(location=title)
+        map_data = json.loads(result.text)["map"]
+        is_updated = False
+        location_map = {
+            location.location: location for location in db.CoronaLocation.select()
+        }
+        for record in map_data:
+            title = record["title"]
+            location, created = _get_or_create_location(title, location_map)
+            last_updated = datetime.fromtimestamp(
+                int(record["last_occurrence_timestamp"])
+            ).date()
+            if created or last_updated > location.last_updated:
+                location_map[title] = location
                 location.last_updated = last_updated
                 location.save()
+                is_updated = True
+        if always_update or is_updated:
+            print("Updating")
+            with db.database.atomic():
+                for record in map_data:
+                    title = record["title"]
+                    location = location_map[title]
 
-                location_log, _ = db.CoronaLocationLog.get_or_create(location=location, date=datetime.today())
-                location_log.infected = record["amount"]["infected"]
-                location_log.infected_females = record["females"]
-                location_log.cured = record["amount"]["recovered"]
-                location_log.deaths = record["amount"]["deaths"]
-                location_log.save()
+                    location_log, _ = db.CoronaLocationLog.get_or_create(
+                        location=location, date=datetime.today()
+                    )
+                    location_log.infected = record["amount"]["infected"]
+                    location_log.infected_females = record["females"]
+                    location_log.cured = record["amount"]["recovered"]
+                    location_log.deaths = record["amount"]["deaths"]
+                    location_log.save()
         cache.clear()
     except Exception:
         logger.exception("Error while scrapping data")
@@ -88,6 +114,7 @@ def start_trying_to_get_corona_counts():
 def run():
     schedule.every().day.at("09:00").do(start_trying_to_get_corona_counts)
     schedule.every().hour.do(get_location_data)
+    schedule.every().day.at("23:30").do(get_location_data, always_update=True)
     logger.info("Coronastat scrapper started")
     while True:
         try:

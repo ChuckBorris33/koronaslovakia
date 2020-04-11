@@ -25,7 +25,7 @@ def scrap_last_day_counts():
 
 @app.cli.command("scrap_location_counts")
 def scrap_location_counts():
-    get_location_data()
+    get_location_data(always_update=True)
 
 
 @app.cli.command("edit_log")
