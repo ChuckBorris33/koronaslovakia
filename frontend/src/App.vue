@@ -4,65 +4,18 @@
       <div class="text-center title">
         <h1 class="text-uppercase">Koronavírus na slovensku</h1>
       </div>
-      <div class="w-100 row">
-        <div class="col-3 d-none d-md-block">
-          <ul id="main-navigation" class="nav flex-column">
-            <li class="nav-item">
-              <a class="nav-link active" href="#infected-count">
-                Počet nakazených
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#outcome-count">
-                Výsledky ochorenia
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#tested-count">
-                Počet testov
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#results-per-day">
-                Výsledky testov za deň
-              </a>
-            </li>
-            <li class="nav-item">
-              <a class="nav-link" href="#by-location-table">
-                Prehľad podľa obcí
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div class="col-md-9 col-12">
-          <div>
-            <InfectedLogChart id="infected-count" />
-            <OutcomeChart id="outcome-count" />
-            <TestedChart id="tested-count" />
-            <InfectedIncreaseChart id="results-per-day" />
-            <InfectedByLocationTable id="by-location-table" />
-          </div>
-        </div>
-      </div>
+      <ChartList />
     </div>
   </div>
 </template>
 
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
-import InfectedLogChart from "@/components/InfectedLogChart.vue";
-import InfectedIncreaseChart from "@/components/TestsPerDayChart.vue";
-import TestedChart from "@/components/TestedChart.vue";
-import OutcomeChart from "@/components/OutcomeChart.vue";
-import InfectedByLocationTable from "@/components/InfectedByLocationTable.vue";
+import ChartList from "@/components/ChartList.vue";
 
 @Component({
   components: {
-    InfectedByLocationTable,
-    OutcomeChart,
-    TestedChart,
-    InfectedIncreaseChart,
-    InfectedLogChart
+    ChartList
   }
 })
 export default class App extends Vue {}
