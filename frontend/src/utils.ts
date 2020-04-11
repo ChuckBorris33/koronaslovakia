@@ -39,6 +39,9 @@ export function getChartConfig(config: ChartConfiguration): ChartConfiguration {
           return format(x, "dd.MM.yyyy");
         }
       }
+    },
+    color: {
+      pattern: ["#2D7DD2", "#EA7317", "#97CC04", "#F45D01"]
     }
   };
   return _.merge(basicConfig, config);
