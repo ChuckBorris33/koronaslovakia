@@ -7,15 +7,7 @@ from flask import current_app
 
 app = current_app
 
-
-@app.cli.command("prepare_database")
-def prepare_database():
-    db.database.create_tables([db.CoronaLog])
-
-
-@app.cli.command("prepare_location_database")
-def prepare_location_database():
-    db.database.create_tables([db.CoronaLocationLog, db.CoronaLocation])
+from coronastats import migrations
 
 
 @app.cli.command("scrap_last_day_counts")
@@ -56,4 +48,21 @@ def edit_log(date=None, infected=None, tests=None, cured=None, deaths=None):
 @app.cli.command("scrapper")
 def run_scrapper():
     scrapper.run()
+
+
+@app.cli.command("migrate")
+@click.argument("goal_version", default=len(migrations.migrations))
+def migrate(goal_version):
+    migrations.migrate(goal_version)
+
+
+@app.cli.command("show_migrations")
+def show_migrations():
+    migrations.show_migrations()
+
+
+@app.cli.command("set_migration_state")
+@click.argument("version")
+def set_migration_state(version):
+    return migrations.set_migration_state(version)
 

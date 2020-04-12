@@ -82,7 +82,6 @@ def get_location_data(always_update: bool = False):
                 location.save()
                 is_updated = True
         if always_update or is_updated:
-            print("Updating")
             with db.database.atomic():
                 for record in map_data:
                     title = record["title"]
@@ -96,6 +95,7 @@ def get_location_data(always_update: bool = False):
                     location_log.cured = record["amount"]["recovered"]
                     location_log.deaths = record["amount"]["deaths"]
                     location_log.save()
+            logger.info("Updated location data")
         cache.clear()
     except Exception:
         logger.exception("Error while scrapping data")
