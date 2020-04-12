@@ -124,11 +124,11 @@ def get_infected_increase_log() -> typing.Iterable[dict]:
 
 def get_last_log_by_location():
     results = []
-    yesterday = datetime.date.today() - datetime.timedelta(days=1)
+    day_before_yesterday = datetime.date.today() - datetime.timedelta(days=2)
     query = CoronaLocation.select().prefetch(
         CoronaLocationLog.select()
         .order_by(CoronaLocationLog.date.desc())
-        .where(CoronaLocationLog.date >= yesterday)
+        .where(CoronaLocationLog.date >= day_before_yesterday)
     )
     for location in query:
         if len(location.data) == 0:
