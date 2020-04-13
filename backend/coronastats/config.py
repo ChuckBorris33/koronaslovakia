@@ -12,3 +12,10 @@ class DevelopmentConfig(object):
     CACHE_TYPE = "null"
     DATABASE = "sqlite:///../app.db"
     DEBUG = True
+
+
+class TestConfig(object):
+    CACHE_TYPE = "simple"
+    DATABASE_PATH = "tests/testing.db"
+    DATABASE = f"sqlite:///{DATABASE_PATH}"
+    TEST = True

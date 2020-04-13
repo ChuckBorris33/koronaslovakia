@@ -47,17 +47,25 @@ def add_corona_log(
     tests: int,
     deaths: int = 0,
     date_: typing.Optional[datetime.date] = None,
-) -> CoronaLog:
+) -> int:
     if not date_:
         date_ = datetime.date.today()
-    created = (
+    created_id = (
         CoronaLog.insert(
             infected=infected, cured=cured, tests=tests, deaths=deaths, datetime=date_
         )
-        .on_conflict_replace()
+        .on_conflict(
+            conflict_target=[CoronaLog.datetime],
+            preserve=[
+                CoronaLog.infected,
+                CoronaLog.cured,
+                CoronaLog.tests,
+                CoronaLog.deaths,
+            ],
+        )
         .execute()
     )
-    return created
+    return created_id
 
 
 def get_log_by_date(log_date):
