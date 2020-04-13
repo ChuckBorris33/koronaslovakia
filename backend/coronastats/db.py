@@ -1,10 +1,8 @@
 import datetime
 import typing
 
-from flask import current_app
+from coronastats import db_wrapper
 from peewee import (
-    SqliteDatabase,
-    Model,
     DateField,
     AutoField,
     IntegerField,
@@ -16,15 +14,8 @@ from peewee import (
 )
 from playhouse.shortcuts import model_to_dict
 
-database = SqliteDatabase(current_app.config["DATABASE_PATH"])
 
-
-class BaseModel(Model):
-    class Meta:
-        database = database
-
-
-class CoronaLog(BaseModel):
+class CoronaLog(db_wrapper.Model):
     id = AutoField()
     datetime = DateField(default=datetime.date.today(), unique=True, index=True)
     infected = IntegerField(default=0)
@@ -33,13 +24,13 @@ class CoronaLog(BaseModel):
     deaths = IntegerField(default=0)
 
 
-class CoronaLocation(BaseModel):
+class CoronaLocation(db_wrapper.Model):
     id = AutoField()
     location = CharField(index=True)
     last_updated = DateField(default=datetime.date.today())
 
 
-class CoronaLocationLog(BaseModel):
+class CoronaLocationLog(db_wrapper.Model):
     id = AutoField()
     date = DateField(default=datetime.date.today(), index=True)
     infected = IntegerField(default=0)

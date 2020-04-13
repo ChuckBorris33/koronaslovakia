@@ -3,9 +3,11 @@ import os
 import sys
 from logging.config import dictConfig
 
-from flask import Flask
+from flask import Flask, current_app
 from flask_cors import CORS
 from flask_caching import Cache
+from peewee import SqliteDatabase
+from playhouse.flask_utils import FlaskDB
 
 
 class LogFilter(logging.Filter):
@@ -45,6 +47,7 @@ dictConfig(
 )
 
 cache = Cache()
+db_wrapper = FlaskDB()
 
 
 def create_app():
@@ -53,6 +56,7 @@ def create_app():
     config_path = os.getenv("CORONASTATS_CONFIG", "coronastats.config.ProductionConfig")
     app.config.from_object(config_path)
 
+    db_wrapper.init_app(app)
     cache.init_app(app)
 
     with app.app_context():

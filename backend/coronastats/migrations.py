@@ -5,7 +5,7 @@ from flask import current_app
 app = current_app
 
 
-def init_database():
+def init_database(database):
     def front():
         database.create_tables([CoronaLog])
 
@@ -15,7 +15,7 @@ def init_database():
     return front, back
 
 
-def add_location_tables():
+def add_location_tables(database):
     def front():
         database.create_tables([CoronaLocationLog, CoronaLocation])
 
@@ -30,14 +30,17 @@ migrations = [init_database, add_location_tables]
 
 
 def get_migration_state():
+    database = db_wrapper.database
     return database.execute_sql("PRAGMA user_version;").fetchone()[0]
 
 
 def set_migration_state(version):
+    database = db_wrapper.database
     return database.execute_sql(f"PRAGMA user_version={int(version)};")
 
 
 def migrate(goal_version):
+    database = db_wrapper.database
     current_state = get_migration_state()
     with database.atomic() as transaction:
         try:
@@ -45,14 +48,14 @@ def migrate(goal_version):
                 migrations_to_apply = migrations[current_state:goal_version]
                 for migration in migrations_to_apply:
                     click.echo(f"Applying {migration.__name__}")
-                    front, _ = migration()
+                    front, _ = migration(database)
                     front()
                 set_migration_state(goal_version)
             elif current_state > goal_version:
                 migrations_to_apply = reversed(migrations[goal_version:current_state])
                 for migration in migrations_to_apply:
                     click.echo(f"Unapplying {migration.__name__}")
-                    _, back = migration()
+                    _, back = migration(database)
                     back()
                 set_migration_state(goal_version)
             else:

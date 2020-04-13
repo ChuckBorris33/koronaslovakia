@@ -4,6 +4,7 @@ import time
 import typing
 from datetime import date, datetime
 
+import coronastats
 import requests
 import schedule
 
@@ -82,7 +83,7 @@ def get_location_data(always_update: bool = False):
                 location.save()
                 is_updated = True
         if always_update or is_updated:
-            with db.database.atomic():
+            with coronastats.db_wrapper.database.atomic():
                 for record in map_data:
                     title = record["title"]
                     location = location_map[title]
