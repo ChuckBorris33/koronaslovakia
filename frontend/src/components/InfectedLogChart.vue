@@ -11,7 +11,7 @@ import { Component, Vue } from "vue-property-decorator";
 import { fetchInfectedLog } from "@/api";
 import { InfectedLog, InfectedLogDataKey } from "@/types";
 import ChartLayout from "@/components/ChartLayout.vue";
-import { getChartConfig, getTooltipWithIncreaseFormatter } from "@/utils";
+import { getChartConfig, getTooltipWithDeltaFormatter } from "@/utils";
 
 @Component({
   components: {
@@ -34,7 +34,7 @@ export default class InfectedLogChart extends Vue {
       },
       tooltip: {
         format: {
-          value: getTooltipWithIncreaseFormatter(rows)
+          value: getTooltipWithDeltaFormatter(rows)
         }
       }
     });

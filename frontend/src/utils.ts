@@ -47,7 +47,7 @@ export function getChartConfig(config: ChartConfiguration): ChartConfiguration {
   return _.merge(basicConfig, config);
 }
 
-export function getTooltipWithIncreaseFormatter(chartRows: PrimitiveArray[]) {
+export function getTooltipWithDeltaFormatter(chartRows: PrimitiveArray[]) {
   return function(
     value: number,
     ratio: number | undefined,
@@ -57,6 +57,8 @@ export function getTooltipWithIncreaseFormatter(chartRows: PrimitiveArray[]) {
     const columnId = chartRows[0].indexOf(id);
     const lastValue: number =
       index > 0 ? (chartRows[index][columnId] as number) : 0;
-    return `${value} (+${value - lastValue})`;
+    const delta = value - lastValue
+    const sign = delta > 0 ? "+" : ""
+    return `${value} (${sign}${delta})`;
   };
 }
