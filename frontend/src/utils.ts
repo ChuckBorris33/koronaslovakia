@@ -2,14 +2,17 @@ import _ from "lodash";
 import { format } from "date-fns";
 import { ChartConfiguration, PrimitiveArray } from "c3";
 
-export function getChartConfig(config: ChartConfiguration): ChartConfiguration {
+export function getChartConfig(
+  config: ChartConfiguration,
+  timespan = 14
+): ChartConfiguration {
   const basicConfig = {
     data: {
       type: "line",
       x: "Dátum",
       xFormat: "%Y-%m-%d",
       rows: [],
-      labels: true
+      labels: timespan > 0
     },
     axis: {
       x: {
@@ -22,8 +25,8 @@ export function getChartConfig(config: ChartConfiguration): ChartConfiguration {
           }
         },
         padding: {
-          left: 3600000 * 12, // 12 hours
-          right: 3600000 * 12 // 12 hours
+          left: 3600000 * 24, // 24 hours
+          right: 3600000 * 24 // 24 hours
         }
       },
       y: {
@@ -57,8 +60,8 @@ export function getTooltipWithDeltaFormatter(chartRows: PrimitiveArray[]) {
     const columnId = chartRows[0].indexOf(id);
     const lastValue: number =
       index > 0 ? (chartRows[index][columnId] as number) : 0;
-    const delta = value - lastValue
-    const sign = delta > 0 ? "+" : ""
+    const delta = value - lastValue;
+    const sign = delta > 0 ? "+" : "";
     return `${value} (${sign}${delta})`;
   };
 }

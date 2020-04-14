@@ -1,5 +1,8 @@
 <template>
-  <ChartLayout title="Prehľad podľa obcí">
+  <div class="chart">
+    <div class="text-center pb-3">
+      <h3>Prehľad podľa obcí</h3>
+    </div>
     <BFormInput class="col-md-4 mb-3" v-model="filter" placeholder="Hľadať" />
     <BTable
       :fields="fields"
@@ -15,7 +18,7 @@
       :total-rows="items.length"
       align="right"
     />
-  </ChartLayout>
+  </div>
 </template>
 
 <script lang="ts">
