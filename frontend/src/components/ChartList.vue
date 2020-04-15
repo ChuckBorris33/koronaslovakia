@@ -33,6 +33,7 @@ import TestedChart from "@/components/TestedChart.vue";
 import InfectedByLocationTable from "@/components/InfectedByLocationTable.vue";
 import TestsPerDayChart from "@/components/TestsPerDayChart.vue";
 import { VueConstructor } from "vue";
+import Summary from "@/components/Summary.vue";
 
 @Component
 export default class ChartList extends Vue {
@@ -42,6 +43,11 @@ export default class ChartList extends Vue {
     id: string;
   }[] {
     return [
+      {
+        title: "Súhrn",
+        component: Summary,
+        id: "summary"
+      },
       {
         title: "Počet nakazených",
         component: InfectedLogChart,
