@@ -12,7 +12,7 @@ from peewee import (
     CharField,
     ForeignKeyField,
 )
-from playhouse.shortcuts import model_to_dict
+from playhouse.shortcuts import model_to_dict, update_model_from_dict
 
 
 class CoronaLog(db_wrapper.Model):
@@ -50,22 +50,12 @@ def add_corona_log(
 ) -> int:
     if not date_:
         date_ = datetime.date.today()
-    created_id = (
-        CoronaLog.insert(
-            infected=infected, cured=cured, tests=tests, deaths=deaths, datetime=date_
-        )
-        .on_conflict(
-            conflict_target=[CoronaLog.datetime],
-            preserve=[
-                CoronaLog.infected,
-                CoronaLog.cured,
-                CoronaLog.tests,
-                CoronaLog.deaths,
-            ],
-        )
-        .execute()
-    )
-    return created_id
+    values = dict(infected=infected, cured=cured, tests=tests, deaths=deaths)
+    log, created = CoronaLog.get_or_create(datetime=date_, defaults=values)
+    if not created:
+        update_model_from_dict(log, values)
+        log.save()
+    return log.id
 
 
 def get_log_by_date(log_date):
