@@ -33,6 +33,7 @@ import {
 } from "bootstrap-vue";
 import ChartLayout from "@/components/ChartLayout.vue";
 import { format } from "date-fns";
+import { normalizeString } from "@/utils";
 
 @Component({
   components: {
@@ -103,8 +104,8 @@ export default class InfectedByLocationTable extends Vue {
 
   private get items() {
     return this.data.filter(item => {
-      const filterValue = this.filter.toLowerCase().trim();
-      return item.location.toLowerCase().startsWith(filterValue);
+      const filterValue = normalizeString(this.filter);
+      return normalizeString(item.location).startsWith(filterValue);
     });
   }
 
