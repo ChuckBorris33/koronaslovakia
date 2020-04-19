@@ -3,7 +3,14 @@
     <div class="text-center pb-3">
       <h3>Prehľad podľa obcí</h3>
     </div>
-    <BFormInput class="col-md-4 mb-3" v-model="filter" placeholder="Hľadať" />
+    <div>
+      <BFormInput
+        class="col-md-4 mb-3"
+        :value="filter"
+        placeholder="Hľadať"
+        @input="setFilter"
+      />
+    </div>
     <BTable
       :fields="fields"
       :items="items"
@@ -34,6 +41,7 @@ import {
 import ChartLayout from "@/components/ChartLayout.vue";
 import { format } from "date-fns";
 import { normalizeString } from "@/utils";
+import _ from "lodash";
 
 @Component({
   components: {
@@ -51,6 +59,7 @@ export default class InfectedByLocationTable extends Vue {
   private perPage = 10;
   private page = 1;
   private filter = "";
+  private debouncedFilter = "";
 
   private orderBy: { column: string; direction: "asc" | "desc" } = {
     column: "infected",
@@ -104,14 +113,25 @@ export default class InfectedByLocationTable extends Vue {
 
   private get items() {
     return this.data.filter(item => {
-      const filterValue = normalizeString(this.filter);
+      const filterValue = normalizeString(this.debouncedFilter);
       return normalizeString(item.location).startsWith(filterValue);
     });
+  }
+
+  private get loading() {
+    return this.filter == this.debouncedFilter
   }
 
   async mounted() {
     const fetchResult = await fetchLastLogByLocation();
     this.data = fetchResult?.data?.results || [];
+  }
+
+  private setFilter(filterValue: string) {
+    this.filter = filterValue;
+    _.debounce(() => {
+      this.debouncedFilter = filterValue;
+    }, 400)();
   }
 }
 </script>
