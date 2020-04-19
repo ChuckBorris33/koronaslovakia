@@ -4,12 +4,22 @@
       <h3>Prehľad podľa obcí</h3>
     </div>
     <div>
-      <BFormInput
-        class="col-md-4 mb-3"
-        :value="filter"
-        placeholder="Hľadať"
-        @input="setFilter"
-      />
+      <BForm>
+        <div class="form-group row">
+          <BFormInput
+            class="col-md-4 col-sm-12"
+            :value="filter"
+            placeholder="Hľadať"
+            @input="setFilter"
+          />
+          <template v-if="loading">
+            <div class="col-form-label pl-3 d-sm-none d-md-inline-block">
+              <BSpinner small variant="primary" />
+              <span class="sr-only">Hľadám...</span>
+            </div>
+          </template>
+        </div>
+      </BForm>
     </div>
     <BTable
       :fields="fields"
@@ -36,7 +46,10 @@ import {
   BTable,
   BPagination,
   BvTableFieldArray,
-  BFormInput
+  BFormInput,
+  BForm,
+  BFormText,
+  BSpinner
 } from "bootstrap-vue";
 import ChartLayout from "@/components/ChartLayout.vue";
 import { format } from "date-fns";
@@ -48,7 +61,10 @@ import _ from "lodash";
     ChartLayout,
     BTable,
     BPagination,
-    BFormInput
+    BFormInput,
+    BForm,
+    BFormText,
+    BSpinner
   }
 })
 export default class InfectedByLocationTable extends Vue {
@@ -119,7 +135,7 @@ export default class InfectedByLocationTable extends Vue {
   }
 
   private get loading() {
-    return this.filter == this.debouncedFilter
+    return this.filter !== this.debouncedFilter;
   }
 
   async mounted() {
