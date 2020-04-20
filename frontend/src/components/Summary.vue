@@ -27,7 +27,7 @@ export default class Summary extends Vue {
     if (!this.infectedLog.length) {
       return [];
     }
-    const lastLogs = this.infectedLog.reverse();
+    const lastLogs = this.infectedLog.slice().reverse();
     return [
       {
         title: "Nakazených",
