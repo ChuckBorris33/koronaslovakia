@@ -3,11 +3,11 @@ import datetime
 import click
 from coronastats import db, scrapper, cache
 from coronastats.scrapper import get_corona_counts, get_location_data
+from coronastats import migrations
+
 from flask import current_app
 
 app = current_app
-
-from coronastats import migrations
 
 
 @app.cli.command("scrap_last_day_counts")
@@ -21,11 +21,11 @@ def scrap_location_counts():
 
 
 @app.cli.command("edit_log")
-@click.option('--date', default=None, help='Date of log')
-@click.option('-i', '--infected', default=None, help='Number of infected.')
-@click.option('-t', '--tests', default=None, help='Number of tests.')
-@click.option('-c', '--cured', default=None, help='Number of cured.')
-@click.option('-d', '--deaths', default=None, help='Number of deaths.')
+@click.option("--date", default=None, help="Date of log")
+@click.option("-i", "--infected", default=None, help="Number of infected.")
+@click.option("-t", "--tests", default=None, help="Number of tests.")
+@click.option("-c", "--cured", default=None, help="Number of cured.")
+@click.option("-d", "--deaths", default=None, help="Number of deaths.")
 def edit_log(date=None, infected=None, tests=None, cured=None, deaths=None):
     log_date = (
         datetime.datetime.strptime(date, "%Y-%m-%d").date()
@@ -65,4 +65,3 @@ def show_migrations():
 @click.argument("version")
 def set_migration_state(version):
     return migrations.set_migration_state(version)
-

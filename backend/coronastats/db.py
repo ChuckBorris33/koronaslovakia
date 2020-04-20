@@ -15,7 +15,7 @@ from peewee import (
 from playhouse.shortcuts import model_to_dict, update_model_from_dict
 
 
-class CoronaLog(db_wrapper.Model):
+class CoronaLog(db_wrapper.Model):  # type: ignore
     id = AutoField()
     datetime = DateField(default=datetime.date.today(), unique=True, index=True)
     infected = IntegerField(default=0)
@@ -24,13 +24,13 @@ class CoronaLog(db_wrapper.Model):
     deaths = IntegerField(default=0)
 
 
-class CoronaLocation(db_wrapper.Model):
+class CoronaLocation(db_wrapper.Model):  # type: ignore
     id = AutoField()
     location = CharField(index=True)
     last_updated = DateField(default=datetime.date.today())
 
 
-class CoronaLocationLog(db_wrapper.Model):
+class CoronaLocationLog(db_wrapper.Model):  # type: ignore
     id = AutoField()
     date = DateField(default=datetime.date.today(), index=True)
     infected = IntegerField(default=0)

@@ -45,14 +45,14 @@ def get_corona_counts(last_date: typing.Optional[date] = None):
                 return schedule.CancelJob
         else:
             logger.info(f"Stats not updated")
-    except Exception as error:
+    except Exception:
         logger.exception("Error while scrapping data")
         return schedule.CancelJob
 
 
 def _get_or_create_location(
     title: str, location_map: dict
-) -> (db.CoronaLocation, bool):
+) -> typing.Tuple[db.CoronaLocation, bool]:
     if title in location_map:
         return location_map[title], False
     else:

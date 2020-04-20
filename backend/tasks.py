@@ -1,6 +1,5 @@
 import os
 import glob
-from contextlib import contextmanager
 
 from invoke import task, Collection
 from fabric import Connection
@@ -46,8 +45,12 @@ def release(c):
         server.put(wheel_path, remote=os.path.join(remote_dir, "backend", wheel_name))
         with server.cd("backend"):
             server.run("python3 -m virtualenv --clear .venv")
-            server.run(f"echo \"export CORONASTATS_SECRET_KEY={secret_key}\" >> .venv/bin/activate")
-            server.run(f"echo \"export FLASK_APP=coronastats:create_app\" >> .venv/bin/activate")
+            server.run(
+                f'echo "export CORONASTATS_SECRET_KEY={secret_key}" >> .venv/bin/activate'
+            )
+            server.run(
+                f'echo "export FLASK_APP=coronastats:create_app" >> .venv/bin/activate'
+            )
             with server.prefix("source .venv/bin/activate"):
                 server.run(f"pip3 install {wheel_name}")
             server.run(f"rm {wheel_name}")
@@ -57,9 +60,7 @@ def release(c):
         "serverconfig/supervisor.conf",
         remote=os.path.join(remote_dir, "supervisor.conf"),
     )
-    server.put(
-        "serverconfig/nginx.conf", remote=os.path.join(remote_dir, "nginx.conf"),
-    )
+    server.put("serverconfig/nginx.conf", remote=os.path.join(remote_dir, "nginx.conf"))
 
 
 @task(pre=[load_context])

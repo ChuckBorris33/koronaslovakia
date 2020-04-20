@@ -3,10 +3,9 @@ import os
 import sys
 from logging.config import dictConfig
 
-from flask import Flask, current_app
+from flask import Flask
 from flask_cors import CORS
 from flask_caching import Cache
-from peewee import SqliteDatabase
 from playhouse.flask_utils import FlaskDB
 
 
@@ -19,30 +18,27 @@ dictConfig(
     {
         "version": 1,
         "formatters": {
-            "default": {
-                "format": "[%(asctime)s] %(levelname)s: %(message)s"
-            }
+            "default": {"format": "[%(asctime)s] %(levelname)s: %(message)s"}
         },
-        "filters": {
-            "log": {
-                "()": LogFilter,
-            }
-        },
+        "filters": {"log": {"()": LogFilter}},
         "handlers": {
             "log": {
                 "class": "logging.StreamHandler",
                 "stream": sys.stdout,
                 "formatter": "default",
-                "filters": ["log"]
+                "filters": ["log"],
             },
             "error": {
                 "class": "logging.StreamHandler",
                 "stream": sys.stderr,
                 "formatter": "default",
-                'level': 'WARN',
+                "level": "WARN",
             },
         },
-        "root": {"level": os.getenv('CORONASTATS_LOGLEVEL', "INFO"), "handlers": ["log", "error"]},
+        "root": {
+            "level": os.getenv("CORONASTATS_LOGLEVEL", "INFO"),
+            "handlers": ["log", "error"],
+        },
     }
 )
 
@@ -60,7 +56,7 @@ def create_app():
     cache.init_app(app)
 
     with app.app_context():
-        from . import routes
-        from . import commands
+        from . import routes  # noqa: E402, F401
+        from . import commands  # noqa: E402, F401
 
         return app

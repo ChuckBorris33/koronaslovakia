@@ -1,5 +1,6 @@
 import click
-from coronastats.db import *
+from coronastats import db_wrapper
+from coronastats.db import CoronaLog, CoronaLocationLog, CoronaLocation
 from flask import current_app
 
 app = current_app

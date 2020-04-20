@@ -27,8 +27,3 @@ def db(setup_db):
     with database.atomic() as transaction:
         yield
         transaction.rollback()
-
-
-
-
-
