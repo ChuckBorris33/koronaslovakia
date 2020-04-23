@@ -37,7 +37,7 @@ def get_corona_counts(last_date: typing.Optional[date] = None):
                 cured=cured,
                 tests=tested,
                 deaths=deaths,
-                date_=updated_at,
+                log_date=updated_at,
             )
             cache.clear()
             if last_date is not None and updated_at > last_date:

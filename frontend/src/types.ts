@@ -11,7 +11,7 @@ export enum InfectedIncreaseLogDataKey {
 }
 
 export type InfectedLog = {
-  datetime: string;
+  date: string;
   [InfectedLogDataKey.INFECTED]: number;
   [InfectedLogDataKey.TESTS]: number;
   [InfectedLogDataKey.CURED]: number;
@@ -19,7 +19,7 @@ export type InfectedLog = {
 };
 
 export type InfectedIncreaseLog = {
-  datetime: string;
+  date: string;
   [InfectedIncreaseLogDataKey.INFECTED]: number;
   [InfectedIncreaseLogDataKey.TESTS]: number;
 };

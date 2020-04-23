@@ -13,11 +13,11 @@ def test_add_corona_log_inserts_new():
     today = datetime.date.today()
     yesterday = today - datetime.timedelta(days=1)
     db.add_corona_log(infected=1, tests=2, deaths=3, cured=4)
-    db.add_corona_log(date_=yesterday, infected=11, tests=22, deaths=33, cured=44)
+    db.add_corona_log(log_date=yesterday, infected=11, tests=22, deaths=33, cured=44)
 
     assert list(db.CoronaLog.select().dicts()) == [
-        dict(id=1, datetime=today, infected=1, cured=4, tests=2, deaths=3),
-        dict(id=2, datetime=yesterday, infected=11, cured=44, tests=22, deaths=33),
+        dict(id=1, date=today, infected=1, cured=4, tests=2, deaths=3),
+        dict(id=2, date=yesterday, infected=11, cured=44, tests=22, deaths=33),
     ]
 
 
@@ -27,12 +27,7 @@ def test_add_corona_log_update():
 
     assert list(db.CoronaLog.select().dicts()) == [
         dict(
-            id=1,
-            datetime=datetime.date.today(),
-            infected=10,
-            cured=40,
-            tests=20,
-            deaths=30,
+            id=1, date=datetime.date.today(), infected=10, cured=40, tests=20, deaths=30
         )
     ]
 
@@ -40,7 +35,7 @@ def test_add_corona_log_update():
 def test_get_log_by_date_existing():
     today = datetime.date.today()
     today_log_id = db.CoronaLog.create(
-        datetime=today, infected=1, tests=2, deaths=3, cured=4
+        date=today, infected=1, tests=2, deaths=3, cured=4
     )
     today_log = db.CoronaLog.get_by_id(today_log_id)
     log, created = db.get_log_by_date(today)
@@ -53,29 +48,29 @@ def test_get_log_by_date_new():
     log, created = db.get_log_by_date(today)
     assert created
     assert model_to_dict(log) == dict(
-        id=1, datetime=today, infected=0, cured=0, tests=0, deaths=0
+        id=1, date=today, infected=0, cured=0, tests=0, deaths=0
     )
 
 
 def test_get_last_log_date():
     today = datetime.date.today()
-    db.CoronaLog.create(datetime=today - datetime.timedelta(days=30))
-    db.CoronaLog.create(datetime=today - datetime.timedelta(days=17))
-    db.CoronaLog.create(datetime=today - datetime.timedelta(days=15))
+    db.CoronaLog.create(date=today - datetime.timedelta(days=30))
+    db.CoronaLog.create(date=today - datetime.timedelta(days=17))
+    db.CoronaLog.create(date=today - datetime.timedelta(days=15))
     assert db.get_last_log_date() == today - datetime.timedelta(days=15)
-    db.CoronaLog.create(datetime=today)
+    db.CoronaLog.create(date=today)
     assert db.get_last_log_date() == today
 
 
 def test_get_infected_log():
     today = datetime.date.today()
     yesterday = today - datetime.timedelta(days=1)
-    db.CoronaLog.create(datetime=yesterday, infected=1, tests=2, deaths=3, cured=4)
+    db.CoronaLog.create(date=yesterday, infected=1, tests=2, deaths=3, cured=4)
     db.CoronaLog.create(infected=11, tests=22, deaths=33, cured=44)
 
     assert list(db.get_infected_log()) == [
-        dict(datetime=yesterday, infected=1, cured=4, tests=2, deaths=3),
-        dict(datetime=today, infected=11, cured=44, tests=22, deaths=33),
+        dict(date=yesterday, infected=1, cured=4, tests=2, deaths=3),
+        dict(date=today, infected=11, cured=44, tests=22, deaths=33),
     ]
 
 
@@ -84,28 +79,28 @@ def test_get_infected_increase_log():
     yesterday = today - datetime.timedelta(days=1)
     day_before_yesterday = today - datetime.timedelta(days=2)
     db.CoronaLog.create(
-        datetime=day_before_yesterday, infected=1, tests=2, deaths=3, cured=4
+        date=day_before_yesterday, infected=1, tests=2, deaths=3, cured=4
     )
-    db.CoronaLog.create(datetime=yesterday, infected=11, tests=12, deaths=13, cured=14)
-    db.CoronaLog.create(datetime=today, infected=31, tests=32, deaths=33, cured=34)
+    db.CoronaLog.create(date=yesterday, infected=11, tests=12, deaths=13, cured=14)
+    db.CoronaLog.create(date=today, infected=31, tests=32, deaths=33, cured=34)
 
     assert list(db.get_infected_increase_log()) == [
         dict(
-            datetime=day_before_yesterday,
+            date=day_before_yesterday,
             infected_increase=1,
             cured_increase=4,
             tests_increase=2,
             deaths_increase=3,
         ),
         dict(
-            datetime=yesterday,
+            date=yesterday,
             infected_increase=10,
             cured_increase=10,
             tests_increase=10,
             deaths_increase=10,
         ),
         dict(
-            datetime=today,
+            date=today,
             infected_increase=20,
             cured_increase=20,
             tests_increase=20,

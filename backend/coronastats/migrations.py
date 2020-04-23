@@ -2,6 +2,7 @@ import click
 from coronastats import db_wrapper
 from coronastats.db import CoronaLog, CoronaLocationLog, CoronaLocation
 from flask import current_app
+from playhouse.migrate import SqliteMigrator, migrate
 
 app = current_app
 
@@ -27,7 +28,25 @@ def add_location_tables(database):
     return front, back
 
 
-migrations = [init_database, add_location_tables]
+def rename_corona_log_datetime(database):
+    migrator = SqliteMigrator(database)
+
+    def front():
+        try:
+            migrate(migrator.rename_column("coronalog", "datetime", "date"))
+        except ValueError:
+            pass
+
+    def back():
+        try:
+            migrate(migrator.rename_column("coronalog", "date", "datetime"))
+        except ValueError:
+            pass
+
+    return front, back
+
+
+migrations = [init_database, add_location_tables, rename_corona_log_datetime]
 
 
 def get_migration_state():
@@ -40,7 +59,7 @@ def set_migration_state(version):
     return database.execute_sql(f"PRAGMA user_version={int(version)};")
 
 
-def migrate(goal_version):
+def run_migrations(goal_version):
     database = db_wrapper.database
     current_state = get_migration_state()
     with database.atomic() as transaction:

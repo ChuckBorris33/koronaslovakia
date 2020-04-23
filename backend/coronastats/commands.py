@@ -53,7 +53,7 @@ def run_scrapper():
 @app.cli.command("migrate")
 @click.argument("goal_version", default=len(migrations.migrations))
 def migrate(goal_version):
-    migrations.migrate(goal_version)
+    migrations.run_migrations(goal_version)
 
 
 @app.cli.command("show_migrations")

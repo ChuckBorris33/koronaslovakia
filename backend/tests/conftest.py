@@ -2,7 +2,7 @@ import os
 
 import pytest
 from coronastats import create_app, db_wrapper
-from coronastats.migrations import migrate, migrations
+from coronastats.migrations import run_migrations, migrations
 
 
 @pytest.fixture(scope="session")
@@ -16,7 +16,7 @@ def app():
 
 @pytest.fixture(scope="session")
 def setup_db(app):
-    migrate(len(migrations))
+    run_migrations(len(migrations))
     yield
     os.remove(app.config["DATABASE_PATH"])
 

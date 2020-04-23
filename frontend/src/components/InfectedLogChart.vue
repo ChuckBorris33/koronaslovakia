@@ -50,12 +50,12 @@ export default class InfectedLogChart extends Vue {
         if (this.timespan < 0) {
           return true;
         }
-        const date = new Date(item.datetime);
+        const date = new Date(item.date);
         const from = subDays(new Date(), this.timespan);
         return date > from;
       })
       .map(item => {
-        const date = new Date(item.datetime);
+        const date = new Date(item.date);
         const dateString: string = format(date, "yyyy-MM-dd");
         return [
           dateString,

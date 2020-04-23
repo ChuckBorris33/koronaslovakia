@@ -17,7 +17,7 @@ from playhouse.shortcuts import model_to_dict, update_model_from_dict
 
 class CoronaLog(db_wrapper.Model):  # type: ignore
     id = AutoField()
-    datetime = DateField(default=datetime.date.today(), unique=True, index=True)
+    date = DateField(default=datetime.date.today(), unique=True, index=True)
     infected = IntegerField(default=0)
     cured = IntegerField(default=0)
     tests = IntegerField(default=0)
@@ -46,12 +46,12 @@ def add_corona_log(
     cured: int,
     tests: int,
     deaths: int = 0,
-    date_: typing.Optional[datetime.date] = None,
+    log_date: typing.Optional[datetime.date] = None,
 ) -> int:
-    if not date_:
-        date_ = datetime.date.today()
+    if not log_date:
+        log_date = datetime.date.today()
     values = dict(infected=infected, cured=cured, tests=tests, deaths=deaths)
-    log, created = CoronaLog.get_or_create(datetime=date_, defaults=values)
+    log, created = CoronaLog.get_or_create(date=log_date, defaults=values)
     if not created:
         update_model_from_dict(log, values)
         log.save()
@@ -59,21 +59,16 @@ def add_corona_log(
 
 
 def get_log_by_date(log_date):
-    return CoronaLog.get_or_create(datetime=log_date)
+    return CoronaLog.get_or_create(date=log_date)
 
 
 def get_last_log_date() -> datetime.date:
-    return (
-        CoronaLog.select(CoronaLog.datetime)
-        .order_by(CoronaLog.datetime.desc())
-        .get()
-        .datetime
-    )
+    return CoronaLog.select(CoronaLog.date).order_by(CoronaLog.date.desc()).get().date
 
 
 def get_infected_log() -> typing.Iterable[dict]:
     return CoronaLog.select(
-        CoronaLog.datetime,
+        CoronaLog.date,
         CoronaLog.infected,
         CoronaLog.cured,
         CoronaLog.tests,
@@ -88,7 +83,7 @@ def get_infected_increase_log() -> typing.Iterable[dict]:
 
     return (
         CoronaLog.select(
-            CoronaLog.datetime,
+            CoronaLog.date,
             Value(CoronaLog.infected - fn.COALESCE(previous_query.c.infected, 0)).alias(
                 "infected_increase"
             ),
