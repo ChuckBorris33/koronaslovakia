@@ -23,13 +23,13 @@ def get_corona_counts(last_date: typing.Optional[date] = None):
             )
         data = json.loads(result.text)
         infected_data = data["tiles"]["k5"]["data"]["d"].pop()
-        negative_data = data["tiles"]["k6"]["data"]["d"].pop()
+        tested_data = data["tiles"]["k23"]["data"]["d"].pop()
         cured_data = data["tiles"]["k7"]["data"]["d"].pop()
         deaths_data = data["tiles"]["k8"]["data"]["d"].pop()
         updated_at = datetime.strptime(infected_data["d"], "%y%m%d").date()
         if last_date is None or updated_at > last_date:
             infected = int(infected_data["v"])
-            tested = int(negative_data["v"]) + infected
+            tested = int(tested_data["v"])
             cured = int(cured_data["v"])
             deaths = int(deaths_data["v"])
             db.add_corona_log(
