@@ -18,6 +18,7 @@ import { Component, Vue } from "vue-property-decorator";
 import { fetchInfectedLog } from "@/api";
 import { InfectedLog } from "@/types";
 import { BCard, BCol, BRow } from "bootstrap-vue";
+import { formatNumber } from "@/utils";
 
 @Component({ components: { BRow, BCol, BCard } })
 export default class Summary extends Vue {
@@ -31,22 +32,22 @@ export default class Summary extends Vue {
     return [
       {
         title: "Nakazených",
-        value: lastLogs[0].infected,
+        value: formatNumber(lastLogs[0].infected),
         delta: this.formatDelta(lastLogs[0].infected - lastLogs[1].infected)
       },
       {
         title: "Testovaných",
-        value: lastLogs[0].tests,
+        value: formatNumber(lastLogs[0].tests),
         delta: this.formatDelta(lastLogs[0].tests - lastLogs[1].tests)
       },
       {
         title: "Úmrtia",
-        value: lastLogs[0].deaths,
+        value: formatNumber(lastLogs[0].deaths),
         delta: this.formatDelta(lastLogs[0].deaths - lastLogs[1].deaths)
       },
       {
         title: "Vyliečení",
-        value: lastLogs[0].cured,
+        value: formatNumber(lastLogs[0].cured),
         delta: this.formatDelta(lastLogs[0].cured - lastLogs[1].cured)
       }
     ];
@@ -56,7 +57,8 @@ export default class Summary extends Vue {
     if (value == 0) {
       return "";
     }
-    return value > 0 ? `(+${value})` : `(${value})`;
+    const formattedValue = formatNumber(value);
+    return value > 0 ? `(+${formattedValue})` : `(${formattedValue})`;
   }
 
   async mounted() {

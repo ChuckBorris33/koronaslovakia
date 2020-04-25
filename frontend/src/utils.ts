@@ -2,17 +2,25 @@ import _ from "lodash";
 import { format } from "date-fns";
 import { ChartConfiguration, PrimitiveArray } from "c3";
 
+export function formatNumber(value: number): string {
+  const valueStr = value.toString();
+  return valueStr.replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+}
+
 export function getChartConfig(
   config: ChartConfiguration,
   timespan = 14
 ): ChartConfiguration {
+  const labels = timespan > 0 ? {
+    format: (value: number) => formatNumber(value)
+  } : false
   const basicConfig = {
     data: {
       type: "line",
       x: "Dátum",
       xFormat: "%Y-%m-%d",
       rows: [],
-      labels: timespan > 0
+      labels
     },
     axis: {
       x: {
@@ -62,7 +70,7 @@ export function getTooltipWithDeltaFormatter(chartRows: PrimitiveArray[]) {
       index > 0 ? (chartRows[index][columnId] as number) : 0;
     const delta = value - lastValue;
     const sign = delta > 0 ? "+" : "";
-    return `${value} (${sign}${delta})`;
+    return `${formatNumber(value)} (${sign}${formatNumber(delta)})`;
   };
 }
 
