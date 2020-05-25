@@ -31,8 +31,7 @@ export default class InfectedLogChart extends Vue {
       {
         bindto: `#${this.graphId}`,
         data: {
-          rows,
-          hide: ["Aktívnych"]
+          rows
         },
         tooltip: {
           format: {
