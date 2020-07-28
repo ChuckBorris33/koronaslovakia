@@ -50,6 +50,14 @@ def get_corona_counts(last_date: typing.Optional[date] = None):
         return schedule.CancelJob
 
 
+def _normalize_location_title(title: str) -> str:
+    if title in ("Bratislava I", "Bratislava II", "Bratislava III", "Bratislava IV", "Bratislava V"):
+        return "Bratislava"
+    elif title in ("Košice I", "Košice II", "Košice III", "Košice IV"):
+        return "Košice"
+    return title
+
+
 def _get_or_create_location(
     title: str, location_map: dict
 ) -> typing.Tuple[db.CoronaLocation, bool]:
@@ -66,13 +74,13 @@ def get_location_data(always_update: bool = False):
             raise ConnectionError(
                 "Unable to fetch data from https://mapa.covid.chat/map_data"
             )
-        map_data = json.loads(result.text)["map"]
+        map_data = json.loads(result.text)["districts"]
         is_updated = False
         location_map = {
             location.location: location for location in db.CoronaLocation.select()
         }
         for record in map_data:
-            title = record["title"]
+            title = _normalize_location_title(record["title"])
             location, created = _get_or_create_location(title, location_map)
             last_updated = datetime.fromtimestamp(
                 int(record["last_occurrence_timestamp"])
@@ -85,14 +93,13 @@ def get_location_data(always_update: bool = False):
         if always_update or is_updated:
             with coronastats.db_wrapper.database.atomic():
                 for record in map_data:
-                    title = record["title"]
+                    title = _normalize_location_title(record["title"])
                     location = location_map[title]
 
                     location_log, _ = db.CoronaLocationLog.get_or_create(
                         location=location, date=datetime.today()
                     )
                     location_log.infected = record["amount"]["infected"]
-                    location_log.infected_females = record["females"]
                     location_log.cured = record["amount"]["recovered"]
                     location_log.deaths = record["amount"]["deaths"]
                     location_log.save()
