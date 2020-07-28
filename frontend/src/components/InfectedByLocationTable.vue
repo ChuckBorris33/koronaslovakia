@@ -91,8 +91,12 @@ export default class InfectedByLocationTable extends Vue {
       {
         key: "infected",
         label: "Nakazení",
-        sortable: true,
-        formatter: this.logItemFormatter
+        sortable: true
+      },
+      {
+        key: "infected_delta",
+        label: "Rozdiel nakazených",
+        sortable: true
       },
       {
         key: "last_updated",
@@ -105,14 +109,6 @@ export default class InfectedByLocationTable extends Vue {
         sortByFormatted: value => new Date(value)
       }
     ];
-  }
-
-  private logItemFormatter(value: number, key: string, item: any): string {
-    const deltaKey = `${key}_delta`;
-    if (!item[deltaKey]) {
-      return String(value);
-    }
-    return `${value} (+${item[deltaKey]})`;
   }
 
   private get items() {

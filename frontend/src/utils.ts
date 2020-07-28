@@ -11,9 +11,12 @@ export function getChartConfig(
   config: ChartConfiguration,
   timespan = 14
 ): ChartConfiguration {
-  const labels = timespan > 0 ? {
-    format: (value: number) => formatNumber(value)
-  } : false
+  const labels =
+    timespan > 0
+      ? {
+          format: (value: number) => formatNumber(value)
+        }
+      : false;
   const basicConfig = {
     data: {
       type: "line",
