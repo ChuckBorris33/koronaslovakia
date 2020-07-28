@@ -1,7 +1,7 @@
 <template>
   <div class="chart">
     <div class="text-center pb-3">
-      <h3>Prehľad podľa obcí</h3>
+      <h3>Prehľad podľa okresov</h3>
     </div>
     <div>
       <BForm>
@@ -91,18 +91,6 @@ export default class InfectedByLocationTable extends Vue {
       {
         key: "infected",
         label: "Nakazení",
-        sortable: true,
-        formatter: this.logItemFormatter
-      },
-      {
-        key: "cured",
-        label: "Vyliečení",
-        sortable: true,
-        formatter: this.logItemFormatter
-      },
-      {
-        key: "deaths",
-        label: "Úmrtia",
         sortable: true,
         formatter: this.logItemFormatter
       },

@@ -69,7 +69,7 @@ export default class ChartList extends Vue {
         id: "results-per-day"
       },
       {
-        title: "Prehľad podľa obcí",
+        title: "Prehľad podľa okresov",
         component: InfectedByLocationTable,
         id: "by-location-table"
       }

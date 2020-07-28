@@ -128,13 +128,7 @@ def get_last_log_by_location():
                 location=location.location,
                 last_updated=location.last_updated,
                 infected=last_log["infected"],
-                cured=last_log["cured"],
-                deaths=last_log["deaths"],
                 infected_delta=last_log["infected"] - previous_log["infected"],
-                cured_delta=last_log["cured"] - previous_log["cured"],
-                deaths_delta=last_log["deaths"] - previous_log["deaths"],
-                infected_females=last_log["infected_females"],
-                infected_males=last_log["infected"] - last_log["infected_females"],
             )
         )
     return results
