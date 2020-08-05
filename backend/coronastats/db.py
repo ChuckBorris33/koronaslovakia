@@ -69,7 +69,7 @@ def add_corona_log(
         hospitalized=hospitalized,
         confirmed_hospitalized=confirmed_hospitalized,
         confirmed_hospitalized_icu=confirmed_hospitalized_icu,
-        confirmed_hospitalized_ventilation=confirmed_hospitalized_ventilation
+        confirmed_hospitalized_ventilation=confirmed_hospitalized_ventilation,
     )
     log, created = CoronaLog.get_or_create(date=log_date, defaults=values)
     if not created:
@@ -93,6 +93,11 @@ def get_infected_log() -> typing.Iterable[dict]:
         CoronaLog.cured,
         CoronaLog.tests,
         CoronaLog.deaths,
+        CoronaLog.median,
+        CoronaLog.hospitalized,
+        CoronaLog.confirmed_hospitalized,
+        CoronaLog.confirmed_hospitalized_icu,
+        CoronaLog.confirmed_hospitalized_ventilation,
     ).dicts()
 
 
@@ -116,6 +121,24 @@ def get_infected_increase_log() -> typing.Iterable[dict]:
             Value(CoronaLog.deaths - fn.COALESCE(previous_query.c.deaths, 0)).alias(
                 "deaths_increase"
             ),
+            Value(CoronaLog.median - fn.COALESCE(previous_query.c.median, 0)).alias(
+                "median_increase"
+            ),
+            Value(
+                CoronaLog.hospitalized - fn.COALESCE(previous_query.c.hospitalized, 0)
+            ).alias("hospitalized_increase"),
+            Value(
+                CoronaLog.confirmed_hospitalized
+                - fn.COALESCE(previous_query.c.confirmed_hospitalized, 0)
+            ).alias("confirmed_hospitalized_increase"),
+            Value(
+                CoronaLog.confirmed_hospitalized_icu
+                - fn.COALESCE(previous_query.c.confirmed_hospitalized_icu, 0)
+            ).alias("confirmed_hospitalized_icu_increase"),
+            Value(
+                CoronaLog.confirmed_hospitalized_ventilation
+                - fn.COALESCE(previous_query.c.confirmed_hospitalized_ventilation, 0)
+            ).alias("confirmed_hospitalized_ventilation"),
         )
         .join(
             previous_query,

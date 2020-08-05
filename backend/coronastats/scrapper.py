@@ -23,13 +23,18 @@ def _normalize_number(number):
 
 def get_korona_gov_data(last_date: typing.Optional[date] = None):
     try:
-        result = requests.get("https://korona.gov.sk/koronavirus-na-slovensku-v-cislach/")
+        result = requests.get(
+            "https://korona.gov.sk/koronavirus-na-slovensku-v-cislach/"
+        )
         if result.status_code != 200:
             raise ConnectionError(
-                "Unable to fetch data from https://korona.gov.sk/koronavirus-na-slovensku-v-cislach/"
+                "Unable to fetch data from "
+                + "https://korona.gov.sk/koronavirus-na-slovensku-v-cislach/"
             )
         wrapper = BeautifulSoup(result.text, "html.parser")
-        container = wrapper.find("main").find("div", {"class": "govuk-width-container"}).div
+        container = (
+            wrapper.find("main").find("div", {"class": "govuk-width-container"}).div
+        )
         rows = container.div.findAll("div", recursive=False)
         date_text = rows[0].div.div.p.text
         updated_at = datetime.strptime(date_text, "Aktualizované %d. %m. %Y").date()
@@ -42,9 +47,23 @@ def get_korona_gov_data(last_date: typing.Optional[date] = None):
             hospitalized = _normalize_number(rows[2].findAll("h3")[0].text)
             confirmed_hospitalized = _normalize_number(rows[2].findAll("h3")[1].text)
             confirmed_hospitalized_text = rows[2].findAll("h3")[1].parent.p.text
-            confirmed_hospitalized_text_match = re.match(r'Počet hospitalizovanýchs potvrdeným covid19z toho na JIS: (.+) a na pľúcnej ventilácii: (.+)', confirmed_hospitalized_text)
-            confirmed_hospitalized_icu = _normalize_number(confirmed_hospitalized_text_match.group(1))
-            confirmed_hospitalized_ventilation = _normalize_number(confirmed_hospitalized_text_match.group(2))
+            confirmed_hospitalized_text_match = re.match(
+                (
+                    r"Počet hospitalizovanýchs potvrdeným covid19z toho na "
+                    r"JIS: (.+) a na pľúcnej ventilácii: (.+)"
+                ),
+                confirmed_hospitalized_text,
+            )
+            confirmed_hospitalized_icu = _normalize_number(
+                confirmed_hospitalized_text_match.group(1)
+                if confirmed_hospitalized_text_match
+                else 0
+            )
+            confirmed_hospitalized_ventilation = _normalize_number(
+                confirmed_hospitalized_text_match.group(2)
+                if confirmed_hospitalized_text_match
+                else 0
+            )
             db.add_corona_log(
                 infected=infected,
                 cured=cured,
@@ -55,7 +74,7 @@ def get_korona_gov_data(last_date: typing.Optional[date] = None):
                 hospitalized=hospitalized,
                 confirmed_hospitalized=confirmed_hospitalized,
                 confirmed_hospitalized_icu=confirmed_hospitalized_icu,
-                confirmed_hospitalized_ventilation=confirmed_hospitalized_ventilation
+                confirmed_hospitalized_ventilation=confirmed_hospitalized_ventilation,
             )
             cache.clear()
             if last_date is not None and updated_at > last_date:
@@ -105,7 +124,13 @@ def get_corona_counts(last_date: typing.Optional[date] = None):
 
 
 def _normalize_location_title(title: str) -> str:
-    if title in ("Bratislava I", "Bratislava II", "Bratislava III", "Bratislava IV", "Bratislava V"):
+    if title in (
+        "Bratislava I",
+        "Bratislava II",
+        "Bratislava III",
+        "Bratislava IV",
+        "Bratislava V",
+    ):
         return "Bratislava"
     elif title in ("Košice I", "Košice II", "Košice III", "Košice IV"):
         return "Košice"

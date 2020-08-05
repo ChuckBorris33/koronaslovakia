@@ -10,7 +10,8 @@ app = current_app
 
 def init_database(database):
     def front():
-        database.execute_sql("""
+        database.execute_sql(
+            """
             create table coronalog
             (
                 id       INTEGER not null
@@ -21,10 +22,10 @@ def init_database(database):
                 tests    INTEGER not null,
                 deaths   INTEGER not null
             );
-            
             create unique index coronalog_date
                 on coronalog (date);
-        """)
+        """
+        )
 
     def back():
         database.execute_sql("DROP TABLE IF EXISTS coronalog;")
@@ -34,7 +35,8 @@ def init_database(database):
 
 def add_location_tables(database):
     def front():
-        database.execute_sql("""
+        database.execute_sql(
+            """
             create table coronalocation
             (
                 id           INTEGER      not null
@@ -42,10 +44,8 @@ def add_location_tables(database):
                 location     VARCHAR(255) not null,
                 last_updated DATE         not null
             );
-            
             create index coronalocation_location
                 on coronalocation (location);
-            
             create table coronalocationlog
             (
                 id               INTEGER not null
@@ -59,13 +59,12 @@ def add_location_tables(database):
                 location_id      INTEGER not null
                     references coronalocation
             );
-            
             create index coronalocationlog_date
                 on coronalocationlog (date);
-            
             create index coronalocationlog_location_id
                 on coronalocationlog (location_id);
-        """)
+        """
+        )
 
     def back():
         database.execute_sql("DROP TABLE IF EXISTS coronalocationlog;")
@@ -97,20 +96,28 @@ def add_additional_corona_log_fields(database):
         confirmed_hospitalized_ventilation = IntegerField(default=0)
 
         migrate(
-            migrator.add_column('coronalog', 'median', median),
-            migrator.add_column('coronalog', 'hospitalized', hospitalized),
-            migrator.add_column('coronalog', 'confirmed_hospitalized', confirmed_hospitalized),
-            migrator.add_column('coronalog', 'confirmed_hospitalized_icu', confirmed_hospitalized_icu),
-            migrator.add_column('coronalog', 'confirmed_hospitalized_ventilation', confirmed_hospitalized_ventilation),
+            migrator.add_column("coronalog", "median", median),
+            migrator.add_column("coronalog", "hospitalized", hospitalized),
+            migrator.add_column(
+                "coronalog", "confirmed_hospitalized", confirmed_hospitalized
+            ),
+            migrator.add_column(
+                "coronalog", "confirmed_hospitalized_icu", confirmed_hospitalized_icu
+            ),
+            migrator.add_column(
+                "coronalog",
+                "confirmed_hospitalized_ventilation",
+                confirmed_hospitalized_ventilation,
+            ),
         )
 
     def back():
         migrate(
-            migrator.drop_column('coronalog', 'median'),
-            migrator.drop_column('coronalog', 'hospitalized'),
-            migrator.drop_column('coronalog', 'confirmed_hospitalized'),
-            migrator.drop_column('coronalog', 'confirmed_hospitalized_icu'),
-            migrator.drop_column('coronalog', 'confirmed_hospitalized_ventilation')
+            migrator.drop_column("coronalog", "median"),
+            migrator.drop_column("coronalog", "hospitalized"),
+            migrator.drop_column("coronalog", "confirmed_hospitalized"),
+            migrator.drop_column("coronalog", "confirmed_hospitalized_icu"),
+            migrator.drop_column("coronalog", "confirmed_hospitalized_ventilation"),
         )
 
     return front, back
@@ -119,9 +126,8 @@ def add_additional_corona_log_fields(database):
 migrations = [
     init_database,
     add_location_tables,
-
     rename_corona_log_datetime,
-    add_additional_corona_log_fields
+    add_additional_corona_log_fields,
 ]
 
 
