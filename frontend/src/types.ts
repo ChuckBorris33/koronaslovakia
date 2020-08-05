@@ -2,12 +2,17 @@ export enum InfectedLogDataKey {
   INFECTED = "infected",
   TESTS = "tests",
   CURED = "cured",
-  DEATHS = "deaths"
+  DEATHS = "deaths",
+  MEDIAN = "median",
+  HOSPITALIZED = "hospitalized",
+  CONFIRMED_HOSPITALIZED = "confirmed_hospitalized",
+  CONFIRMED_HOSPITALIZED_ICU = "confirmed_hospitalized_icu",
+  CONFIRMED_HOSPITALIZED_VENTILATION = "confirmed_hospitalized_ventilation",
 }
 
 export enum InfectedIncreaseLogDataKey {
   INFECTED = "infected_increase",
-  TESTS = "tests_increase"
+  TESTS = "tests_increase",
 }
 
 export type InfectedLog = {
@@ -16,6 +21,11 @@ export type InfectedLog = {
   [InfectedLogDataKey.TESTS]: number;
   [InfectedLogDataKey.CURED]: number;
   [InfectedLogDataKey.DEATHS]: number;
+  [InfectedLogDataKey.MEDIAN]: number;
+  [InfectedLogDataKey.HOSPITALIZED]: number;
+  [InfectedLogDataKey.CONFIRMED_HOSPITALIZED]: number;
+  [InfectedLogDataKey.CONFIRMED_HOSPITALIZED_ICU]: number;
+  [InfectedLogDataKey.CONFIRMED_HOSPITALIZED_VENTILATION]: number;
 };
 
 export type InfectedIncreaseLog = {

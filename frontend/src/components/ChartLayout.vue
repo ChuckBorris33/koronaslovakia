@@ -22,8 +22,8 @@ import { BFormRadioGroup } from "bootstrap-vue";
 
 @Component({
   components: {
-    BFormRadioGroup
-  }
+    BFormRadioGroup,
+  },
 })
 export default class ChartLayout extends Vue {
   @Prop({ type: String, required: true })
@@ -42,7 +42,7 @@ export default class ChartLayout extends Vue {
   private options = [
     { text: "Všetko", value: -1 },
     { text: "Mesiac", value: 30 },
-    { text: "Dva týždne", value: 14 }
+    { text: "Dva týždne", value: 14 },
   ];
 }
 </script>

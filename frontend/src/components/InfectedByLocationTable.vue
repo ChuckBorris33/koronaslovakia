@@ -49,7 +49,7 @@ import {
   BFormInput,
   BForm,
   BFormText,
-  BSpinner
+  BSpinner,
 } from "bootstrap-vue";
 import ChartLayout from "@/components/ChartLayout.vue";
 import { format } from "date-fns";
@@ -64,8 +64,8 @@ import _ from "lodash";
     BFormInput,
     BForm,
     BFormText,
-    BSpinner
-  }
+    BSpinner,
+  },
 })
 export default class InfectedByLocationTable extends Vue {
   private data: LastLogByLocation[] = [];
@@ -79,40 +79,40 @@ export default class InfectedByLocationTable extends Vue {
 
   private orderBy: { column: string; direction: "asc" | "desc" } = {
     column: "infected",
-    direction: "desc"
+    direction: "desc",
   };
   private get fields(): BvTableFieldArray {
     return [
       {
         key: "location",
         label: "Obec",
-        sortable: true
+        sortable: true,
       },
       {
         key: "infected",
         label: "Nakazení",
-        sortable: true
+        sortable: true,
       },
       {
         key: "infected_delta",
         label: "Rozdiel nakazených",
-        sortable: true
+        sortable: true,
       },
       {
         key: "last_updated",
         label: "Posledný prípad",
         sortable: true,
-        formatter: value => {
+        formatter: (value) => {
           const date = new Date(value);
           return format(date, "d.M.yyyy");
         },
-        sortByFormatted: value => new Date(value)
-      }
+        sortByFormatted: (value) => new Date(value),
+      },
     ];
   }
 
   private get items() {
-    return this.data.filter(item => {
+    return this.data.filter((item) => {
       const filterValue = normalizeString(this.debouncedFilter);
       return normalizeString(item.location).startsWith(filterValue);
     });

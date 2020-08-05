@@ -1,11 +1,39 @@
 <template>
   <div class="summary">
-    <BRow>
-      <BCol v-for="(card, id) in cards" :key="id" md="6" sm="12" class="mb-3">
-        <BCard :header="card.title" align="center">
-          <div class="py-4">
-            <h3 class="d-inline">{{ card.value }}</h3>
-            <small class="text-muted"> {{ card.delta }}</small>
+    <BRow class="align-content-stretch">
+      <BCol md="4" sm="12" class="mb-3">
+        <BCard header="Aktuálny kĺzavý medián" align="center" class="h-100">
+          <div
+            v-if="this.infectedLog.length"
+            class="d-flex align-items-center justify-content-center h-100"
+          >
+            <div>
+              <h3 class="d-inline">{{ lastLogs[0].median }}</h3>
+              <small class="text-muted">
+                {{
+                  formatDelta(lastLogs[0].median - lastLogs[1].median)
+                }}</small
+              >
+            </div>
+          </div>
+        </BCard>
+      </BCol>
+      <BCol md="8" sm="12" class="mb-3">
+        <BCard header="Vývoj kĺzavého mediánu" align="center">
+          <div id="medianGraph"></div>
+        </BCard>
+      </BCol>
+    </BRow>
+    <BRow class="align-content-stretch">
+      <BCol v-for="(card, id) in cards" :key="id" md="4" sm="12" class="mb-3">
+        <BCard :header="card.title" align="center" class="h-100">
+          <div
+            class="py-4 d-flex align-items-center justify-content-center h-100"
+          >
+            <div>
+              <h3 class="d-inline">{{ card.value }}</h3>
+              <small class="text-muted"> {{ card.delta }}</small>
+            </div>
           </div>
         </BCard>
       </BCol>
@@ -16,40 +44,89 @@
 <script lang="ts">
 import { Component, Vue } from "vue-property-decorator";
 import { fetchInfectedLog } from "@/api";
-import { InfectedLog } from "@/types";
+import { InfectedLog, InfectedLogDataKey } from "@/types";
 import { BCard, BCol, BRow } from "bootstrap-vue";
-import { formatNumber } from "@/utils";
+import {
+  formatNumber,
+  getChartConfig,
+  getTooltipWithDeltaFormatter,
+} from "@/utils";
+import c3, { ChartConfiguration, PrimitiveArray } from "c3";
+import { format, subDays } from "date-fns";
 
 @Component({ components: { BRow, BCol, BCard } })
 export default class Summary extends Vue {
   private infectedLog: InfectedLog[] = [];
 
-  private get cards() {
+  private get lastLogs() {
     if (!this.infectedLog.length) {
       return [];
     }
-    const lastLogs = this.infectedLog.slice().reverse();
+    return this.infectedLog.slice().reverse();
+  }
+
+  private get cards() {
+    if (!this.lastLogs.length) {
+      return [];
+    }
+    const lastLogs = this.lastLogs;
     return [
       {
         title: "Nakazených",
         value: formatNumber(lastLogs[0].infected),
-        delta: this.formatDelta(lastLogs[0].infected - lastLogs[1].infected)
+        delta: this.formatDelta(lastLogs[0].infected - lastLogs[1].infected),
       },
       {
         title: "Testovaných",
         value: formatNumber(lastLogs[0].tests),
-        delta: this.formatDelta(lastLogs[0].tests - lastLogs[1].tests)
+        delta: this.formatDelta(lastLogs[0].tests - lastLogs[1].tests),
       },
       {
         title: "Úmrtia",
         value: formatNumber(lastLogs[0].deaths),
-        delta: this.formatDelta(lastLogs[0].deaths - lastLogs[1].deaths)
+        delta: this.formatDelta(lastLogs[0].deaths - lastLogs[1].deaths),
       },
       {
         title: "Vyliečení",
         value: formatNumber(lastLogs[0].cured),
-        delta: this.formatDelta(lastLogs[0].cured - lastLogs[1].cured)
-      }
+        delta: this.formatDelta(lastLogs[0].cured - lastLogs[1].cured),
+      },
+      {
+        title: "Aktívnych",
+        value: formatNumber(this.getActive(0)),
+        delta: this.formatDelta(this.getActive(0) - this.getActive(1)),
+      },
+      {
+        title: "Hospitalizovaných",
+        value: formatNumber(lastLogs[0].hospitalized),
+        delta: this.formatDelta(
+          lastLogs[0].hospitalized - lastLogs[1].hospitalized
+        ),
+      },
+      {
+        title: "Potvrdených Hospitalizovaných",
+        value: formatNumber(lastLogs[0].confirmed_hospitalized),
+        delta: this.formatDelta(
+          lastLogs[0].confirmed_hospitalized -
+            lastLogs[1].confirmed_hospitalized
+        ),
+      },
+      {
+        title: "Na JIS",
+        value: formatNumber(lastLogs[0].confirmed_hospitalized_icu),
+        delta: this.formatDelta(
+          lastLogs[0].confirmed_hospitalized_icu -
+            lastLogs[1].confirmed_hospitalized_icu
+        ),
+      },
+      {
+        title: "Na pľúcnej ventilácií",
+        value: formatNumber(lastLogs[0].confirmed_hospitalized_ventilation),
+        delta: this.formatDelta(
+          lastLogs[0].confirmed_hospitalized_ventilation -
+            lastLogs[1].confirmed_hospitalized_ventilation
+        ),
+      },
     ];
   }
 
@@ -64,6 +141,56 @@ export default class Summary extends Vue {
   async mounted() {
     const fetchResult = await fetchInfectedLog();
     this.infectedLog = fetchResult?.data?.results || [];
+    c3.generate(this.chartConfig);
+  }
+
+  private getActive(id: number) {
+    if (!this.lastLogs.length) {
+      return 0;
+    }
+    const log = this.lastLogs[id];
+    if (log) {
+      return log.infected - log.deaths - log.cured;
+    }
+    return 0;
+  }
+
+  private get chartConfig(): ChartConfiguration {
+    const rows = [["Dátum", "Medián"], ...this.chartDataRows];
+    return getChartConfig(
+      {
+        bindto: "#medianGraph",
+        data: {
+          rows,
+        },
+        tooltip: {
+          format: {
+            value: getTooltipWithDeltaFormatter(rows),
+          },
+        },
+        legend: {
+          show: false,
+        },
+        size: {
+          height: 200,
+        },
+      },
+      7
+    );
+  }
+
+  private get chartDataRows(): PrimitiveArray[] {
+    return this.infectedLog
+      .filter((item) => {
+        const date = new Date(item.date);
+        const from = subDays(new Date(), 7);
+        return date > from;
+      })
+      .map((item) => {
+        const date = new Date(item.date);
+        const dateString: string = format(date, "yyyy-MM-dd");
+        return [dateString, item[InfectedLogDataKey.MEDIAN]];
+      });
   }
 }
 </script>
@@ -72,5 +199,9 @@ export default class Summary extends Vue {
 .summary {
   margin-bottom: 4em;
   min-height: 250px;
+}
+
+#medianGraph {
+  max-height: 200px;
 }
 </style>

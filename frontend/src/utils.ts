@@ -14,7 +14,7 @@ export function getChartConfig(
   const labels =
     timespan > 0
       ? {
-          format: (value: number) => formatNumber(value)
+          format: (value: number) => formatNumber(value),
         }
       : false;
   const basicConfig = {
@@ -23,7 +23,7 @@ export function getChartConfig(
       x: "Dátum",
       xFormat: "%Y-%m-%d",
       rows: [],
-      labels
+      labels,
     },
     axis: {
       x: {
@@ -32,37 +32,37 @@ export function getChartConfig(
           format: "%d.%m",
           rotate: -60,
           culling: {
-            max: 16
-          }
+            max: 16,
+          },
         },
         padding: {
           left: 3600000 * 24, // 24 hours
-          right: 3600000 * 24 // 24 hours
-        }
+          right: 3600000 * 24, // 24 hours
+        },
       },
       y: {
         min: 0,
         padding: {
-          bottom: 10
-        }
-      }
+          bottom: 10,
+        },
+      },
     },
     tooltip: {
       format: {
         title(x: Date): string {
           return format(x, "dd.MM.yyyy");
-        }
-      }
+        },
+      },
     },
     color: {
-      pattern: ["#2D7DD2", "#EA7317", "#97CC04", "#F45D01"]
-    }
+      pattern: ["#2D7DD2", "#EA7317", "#97CC04", "#F45D01"],
+    },
   };
   return _.merge(basicConfig, config);
 }
 
 export function getTooltipWithDeltaFormatter(chartRows: PrimitiveArray[]) {
-  return function(
+  return function (
     value: number,
     ratio: number | undefined,
     id: string,

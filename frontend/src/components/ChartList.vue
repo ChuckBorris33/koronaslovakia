@@ -46,33 +46,33 @@ export default class ChartList extends Vue {
       {
         title: "Súhrn",
         component: Summary,
-        id: "summary"
+        id: "summary",
       },
       {
         title: "Počet nakazených",
         component: InfectedLogChart,
-        id: "infected-count"
+        id: "infected-count",
       },
       {
         title: "Výsledky ochorenia",
         component: OutcomeChart,
-        id: "outcome-count"
+        id: "outcome-count",
       },
       {
         title: "Počet testov",
         component: TestedChart,
-        id: "tested-count"
+        id: "tested-count",
       },
       {
         title: "Výsledky testov za deň",
         component: TestsPerDayChart,
-        id: "results-per-day"
+        id: "results-per-day",
       },
       {
         title: "Prehľad podľa okresov",
         component: InfectedByLocationTable,
-        id: "by-location-table"
-      }
+        id: "by-location-table",
+      },
     ];
   }
 }

@@ -3,12 +3,12 @@ import cachios from "cachios";
 import {
   InfectedIncreaseLogResult,
   InfectedLogResult,
-  LastLogByLocationResult
+  LastLogByLocationResult,
 } from "@/types";
 
 const api = cachios.create(
   axios.create({
-    baseURL: process.env.VUE_APP_API_BASE
+    baseURL: process.env.VUE_APP_API_BASE,
   })
 );
 

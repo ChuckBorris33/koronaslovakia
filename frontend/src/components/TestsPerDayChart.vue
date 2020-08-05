@@ -15,8 +15,8 @@ import { getChartConfig } from "@/utils";
 
 @Component({
   components: {
-    ChartLayout
-  }
+    ChartLayout,
+  },
 })
 export default class TestsPerDayChart extends Vue {
   private title = "Výsledky testov za deň";
@@ -32,21 +32,21 @@ export default class TestsPerDayChart extends Vue {
         data: {
           type: "bar",
           rows: [["Dátum", "Pozitívne", "Negatívne"], ...this.chartDataRows],
-          groups: [["Pozitívne", "Negatívne"]]
+          groups: [["Pozitívne", "Negatívne"]],
         },
         tooltip: {
           format: {
-            value: this.tooltipValue
-          }
+            value: this.tooltipValue,
+          },
         },
         axis: {
           y: {
             min: 0,
             padding: {
-              bottom: 0
-            }
-          }
-        }
+              bottom: 0,
+            },
+          },
+        },
       },
       this.timespan
     );
@@ -67,7 +67,7 @@ export default class TestsPerDayChart extends Vue {
 
   private get chartDataRows() {
     return this.infectedLog
-      .filter(item => {
+      .filter((item) => {
         if (this.timespan < 0) {
           return true;
         }
@@ -75,12 +75,12 @@ export default class TestsPerDayChart extends Vue {
         const from = subDays(new Date(), this.timespan);
         return date > from;
       })
-      .map(item => {
+      .map((item) => {
         const date = new Date(item.date);
         return [
           format(date, "yyyy-MM-dd"),
           item.infected_increase,
-          item.tests_increase - item.infected_increase
+          item.tests_increase - item.infected_increase,
         ];
       });
   }

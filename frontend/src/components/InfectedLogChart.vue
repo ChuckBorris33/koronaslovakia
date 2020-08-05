@@ -15,8 +15,8 @@ import { getChartConfig, getTooltipWithDeltaFormatter } from "@/utils";
 
 @Component({
   components: {
-    ChartLayout
-  }
+    ChartLayout,
+  },
 })
 export default class InfectedLogChart extends Vue {
   private graphId = "cases-over-time-chart";
@@ -31,13 +31,13 @@ export default class InfectedLogChart extends Vue {
       {
         bindto: `#${this.graphId}`,
         data: {
-          rows
+          rows,
         },
         tooltip: {
           format: {
-            value: getTooltipWithDeltaFormatter(rows)
-          }
-        }
+            value: getTooltipWithDeltaFormatter(rows),
+          },
+        },
       },
       this.timespan
     );
@@ -45,7 +45,7 @@ export default class InfectedLogChart extends Vue {
 
   private get chartDataRows(): PrimitiveArray[] {
     return this.infectedLog
-      .filter(item => {
+      .filter((item) => {
         if (this.timespan < 0) {
           return true;
         }
@@ -53,7 +53,7 @@ export default class InfectedLogChart extends Vue {
         const from = subDays(new Date(), this.timespan);
         return date > from;
       })
-      .map(item => {
+      .map((item) => {
         const date = new Date(item.date);
         const dateString: string = format(date, "yyyy-MM-dd");
         return [
@@ -61,7 +61,7 @@ export default class InfectedLogChart extends Vue {
           item[InfectedLogDataKey.INFECTED],
           item[InfectedLogDataKey.INFECTED] -
             item[InfectedLogDataKey.CURED] -
-            item[InfectedLogDataKey.DEATHS]
+            item[InfectedLogDataKey.DEATHS],
         ];
       });
   }

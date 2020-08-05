@@ -30,8 +30,8 @@ import { BNavbar, BNavbarBrand, BNavbarNav, BNavItem } from "bootstrap-vue";
     BNavbar,
     BNavbarBrand,
     BNavbarNav,
-    BNavItem
-  }
+    BNavItem,
+  },
 })
 export default class App extends Vue {}
 </script>

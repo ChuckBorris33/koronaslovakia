@@ -15,8 +15,8 @@ import { getChartConfig, getTooltipWithDeltaFormatter } from "@/utils";
 
 @Component({
   components: {
-    ChartLayout
-  }
+    ChartLayout,
+  },
 })
 export default class TestedChart extends Vue {
   private title = "Počet testov";
@@ -31,13 +31,13 @@ export default class TestedChart extends Vue {
       {
         bindto: `#${this.graphId}`,
         data: {
-          rows
+          rows,
         },
         tooltip: {
           format: {
-            value: getTooltipWithDeltaFormatter(rows)
-          }
-        }
+            value: getTooltipWithDeltaFormatter(rows),
+          },
+        },
       },
       this.timespan
     );
@@ -45,7 +45,7 @@ export default class TestedChart extends Vue {
 
   private get chartDataRows() {
     return this.infectedLog
-      .filter(item => {
+      .filter((item) => {
         if (this.timespan < 0) {
           return true;
         }
@@ -53,7 +53,7 @@ export default class TestedChart extends Vue {
         const from = subDays(new Date(), this.timespan);
         return date > from;
       })
-      .map(item => {
+      .map((item) => {
         const date = new Date(item.date);
         return [format(date, "yyyy-MM-dd"), item[InfectedLogDataKey.TESTS]];
       });

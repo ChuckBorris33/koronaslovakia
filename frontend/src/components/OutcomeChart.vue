@@ -15,8 +15,8 @@ import { getChartConfig, getTooltipWithDeltaFormatter } from "@/utils";
 
 @Component({
   components: {
-    ChartLayout
-  }
+    ChartLayout,
+  },
 })
 export default class OutcomeChart extends Vue {
   private title = "Výsledky ochorenia";
@@ -31,13 +31,13 @@ export default class OutcomeChart extends Vue {
       {
         bindto: `#${this.graphId}`,
         data: {
-          rows
+          rows,
         },
         tooltip: {
           format: {
-            value: getTooltipWithDeltaFormatter(rows)
-          }
-        }
+            value: getTooltipWithDeltaFormatter(rows),
+          },
+        },
       },
       this.timespan
     );
@@ -46,10 +46,10 @@ export default class OutcomeChart extends Vue {
   private get chartDataRows() {
     return this.infectedLog
       .filter(
-        item =>
+        (item) =>
           item[InfectedLogDataKey.CURED] || item[InfectedLogDataKey.DEATHS]
       )
-      .filter(item => {
+      .filter((item) => {
         if (this.timespan < 0) {
           return true;
         }
@@ -57,12 +57,12 @@ export default class OutcomeChart extends Vue {
         const from = subDays(new Date(), this.timespan);
         return date > from;
       })
-      .map(item => {
+      .map((item) => {
         const date = new Date(item.date);
         return [
           format(date, "yyyy-MM-dd"),
           item[InfectedLogDataKey.CURED],
-          item[InfectedLogDataKey.DEATHS]
+          item[InfectedLogDataKey.DEATHS],
         ];
       });
   }
