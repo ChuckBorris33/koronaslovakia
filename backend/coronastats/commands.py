@@ -37,7 +37,9 @@ def scrap_location_counts():
 @click.option("-c", "--cured", default=None, help="Number of cured.")
 @click.option("-d", "--deaths", default=None, help="Number of deaths.")
 @click.option("-m", "--median", default=None, help="Median number.")
-def edit_log(date=None, infected=None, tests=None, cured=None, deaths=None, median=None):
+def edit_log(
+    date=None, infected=None, tests=None, cured=None, deaths=None, median=None
+):
     log_date = (
         datetime.datetime.strptime(date, "%Y-%m-%d").date()
         if date

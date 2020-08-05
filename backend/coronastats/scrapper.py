@@ -3,7 +3,7 @@ import re
 import sys
 import time
 import typing
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 import coronastats
 import requests
@@ -37,7 +37,9 @@ def get_korona_gov_data(last_date: typing.Optional[date] = None):
         )
         rows = container.div.findAll("div", recursive=False)
         date_text = rows[0].div.div.p.text
-        updated_at = datetime.strptime(date_text, "Aktualizované %d. %m. %Y").date()
+        updated_at = datetime.strptime(
+            date_text, "Aktualizované %d. %m. %Y"
+        ).date() - timedelta(days=1)
         if last_date is None or updated_at > last_date:
             infected = _normalize_number(rows[1].findAll("h3")[1].text)
             tested = _normalize_number(rows[1].findAll("h3")[0].text)
