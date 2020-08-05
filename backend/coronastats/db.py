@@ -22,6 +22,11 @@ class CoronaLog(db_wrapper.Model):  # type: ignore
     cured = IntegerField(default=0)
     tests = IntegerField(default=0)
     deaths = IntegerField(default=0)
+    median = IntegerField(default=0)
+    hospitalized = IntegerField(default=0)
+    confirmed_hospitalized = IntegerField(default=0)
+    confirmed_hospitalized_icu = IntegerField(default=0)
+    confirmed_hospitalized_ventilation = IntegerField(default=0)
 
 
 class CoronaLocation(db_wrapper.Model):  # type: ignore
@@ -47,10 +52,25 @@ def add_corona_log(
     tests: int,
     deaths: int = 0,
     log_date: typing.Optional[datetime.date] = None,
+    median: int = 0,
+    hospitalized: int = 0,
+    confirmed_hospitalized: int = 0,
+    confirmed_hospitalized_icu: int = 0,
+    confirmed_hospitalized_ventilation: int = 0,
 ) -> int:
     if not log_date:
         log_date = datetime.date.today()
-    values = dict(infected=infected, cured=cured, tests=tests, deaths=deaths)
+    values = dict(
+        infected=infected,
+        cured=cured,
+        tests=tests,
+        deaths=deaths,
+        median=median,
+        hospitalized=hospitalized,
+        confirmed_hospitalized=confirmed_hospitalized,
+        confirmed_hospitalized_icu=confirmed_hospitalized_icu,
+        confirmed_hospitalized_ventilation=confirmed_hospitalized_ventilation
+    )
     log, created = CoronaLog.get_or_create(date=log_date, defaults=values)
     if not created:
         update_model_from_dict(log, values)

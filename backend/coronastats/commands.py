@@ -2,7 +2,7 @@ import datetime
 
 import click
 from coronastats import db, scrapper, cache
-from coronastats.scrapper import get_corona_counts, get_location_data
+from coronastats.scrapper import get_corona_counts, get_location_data, get_korona_gov_data
 from coronastats import migrations
 
 from flask import current_app
@@ -10,9 +10,15 @@ from flask import current_app
 app = current_app
 
 
-@app.cli.command("scrap_last_day_counts")
-def scrap_last_day_counts():
+#Backup method for scrapping coronalog
+@app.cli.command("backup_scrap_last_day_counts")
+def backup_scrap_last_day_counts():
     get_corona_counts()
+
+
+@app.cli.command("scrap_korona_gov_data")
+def scrap_korona_gov_data():
+    get_korona_gov_data()
 
 
 @app.cli.command("scrap_location_counts")

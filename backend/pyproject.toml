@@ -17,6 +17,7 @@ peewee = "^3.13.1"
 gunicorn = "^20.0.4"
 Flask-Caching = "^1.8.0"
 pylibmc = { version = "^1.6.1", optional = true }
+beautifulsoup4 = "^4.9.1"
 
 [tool.poetry.dev-dependencies]
 invoke = "^1.4.1"

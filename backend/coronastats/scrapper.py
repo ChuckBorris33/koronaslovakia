@@ -1,4 +1,5 @@
 import json
+import re
 import sys
 import time
 import typing
@@ -8,12 +9,65 @@ import coronastats
 import requests
 import schedule
 
-from coronastats import db, cache
+from bs4 import BeautifulSoup
 from flask import current_app
+
+from coronastats import db, cache
 
 logger = current_app.logger.getChild("scrapper")
 
 
+def _normalize_number(number):
+    return int(re.sub("[^0-9]+", "", number))
+
+
+def get_korona_gov_data(last_date: typing.Optional[date] = None):
+    try:
+        result = requests.get("https://korona.gov.sk/koronavirus-na-slovensku-v-cislach/")
+        if result.status_code != 200:
+            raise ConnectionError(
+                "Unable to fetch data from https://korona.gov.sk/koronavirus-na-slovensku-v-cislach/"
+            )
+        wrapper = BeautifulSoup(result.text, "html.parser")
+        container = wrapper.find("main").find("div", {"class": "govuk-width-container"}).div
+        rows = container.div.findAll("div", recursive=False)
+        date_text = rows[0].div.div.p.text
+        updated_at = datetime.strptime(date_text, "Aktualizované %d. %m. %Y").date()
+        if last_date is None or updated_at > last_date:
+            infected = _normalize_number(rows[1].findAll("h3")[1].text)
+            tested = _normalize_number(rows[1].findAll("h3")[0].text)
+            cured = _normalize_number(rows[1].findAll("h3")[3].text)
+            deaths = _normalize_number(rows[1].findAll("h3")[2].text)
+            median = _normalize_number(rows[2].findAll("h3")[2].text)
+            hospitalized = _normalize_number(rows[2].findAll("h3")[0].text)
+            confirmed_hospitalized = _normalize_number(rows[2].findAll("h3")[1].text)
+            confirmed_hospitalized_text = rows[2].findAll("h3")[1].parent.p.text
+            confirmed_hospitalized_text_match = re.match(r'Počet hospitalizovanýchs potvrdeným covid19z toho na JIS: (.+) a na pľúcnej ventilácii: (.+)', confirmed_hospitalized_text)
+            confirmed_hospitalized_icu = _normalize_number(confirmed_hospitalized_text_match.group(1))
+            confirmed_hospitalized_ventilation = _normalize_number(confirmed_hospitalized_text_match.group(2))
+            db.add_corona_log(
+                infected=infected,
+                cured=cured,
+                tests=tested,
+                deaths=deaths,
+                log_date=updated_at,
+                median=median,
+                hospitalized=hospitalized,
+                confirmed_hospitalized=confirmed_hospitalized,
+                confirmed_hospitalized_icu=confirmed_hospitalized_icu,
+                confirmed_hospitalized_ventilation=confirmed_hospitalized_ventilation
+            )
+            cache.clear()
+            if last_date is not None and updated_at > last_date:
+                logger.info(f"Scrapped {infected}, {tested}, Cancelling job for today")
+                return schedule.CancelJob
+
+    except Exception:
+        logger.exception("Error while scrapping data")
+        return schedule.CancelJob
+
+
+# Old scrapper method kept as backup
 def get_corona_counts(last_date: typing.Optional[date] = None):
     try:
         result = requests.get("https://virus-korona.sk/api.php")
@@ -110,17 +164,17 @@ def get_location_data(always_update: bool = False):
         return schedule.CancelJob
 
 
-def start_trying_to_get_corona_counts():
+def start_trying_to_get_korona_gov_data():
     try:
         last_date = db.get_last_log_date()
-        schedule.every(10).minutes.do(get_corona_counts, last_date)
+        schedule.every(10).minutes.do(get_korona_gov_data, last_date)
     except Exception as error:
         logger.error(str(error))
         raise
 
 
 def run():
-    schedule.every().day.at("09:00").do(start_trying_to_get_corona_counts)
+    schedule.every().day.at("09:00").do(start_trying_to_get_korona_gov_data)
     schedule.every().hour.do(get_location_data)
     schedule.every().day.at("23:30").do(get_location_data, always_update=True)
     logger.info("Coronastat scrapper started")
