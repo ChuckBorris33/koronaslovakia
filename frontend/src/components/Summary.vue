@@ -1,10 +1,9 @@
 <template>
-  <div class="summary">
+  <div v-if="this.infectedLog.length" class="summary">
     <BRow class="align-content-stretch">
       <BCol md="4" sm="12" class="mb-3">
         <BCard header="Aktuálny kĺzavý medián" align="center" class="h-100">
           <div
-            v-if="this.infectedLog.length"
             class="d-flex align-items-center justify-content-center h-100"
           >
             <div>
@@ -37,6 +36,49 @@
           </div>
         </BCard>
       </BCol>
+      <BCol md="4" sm="12" class="mb-3">
+        <BCard header="Hospitalizovaných" align="center" class="h-100">
+          <div
+            class="d-flex flex-column align-items-center justify-content-center h-100"
+          >
+            <div class="pb-2">
+              <h4 class="d-inline">{{ hospitalizedData.hospitalized }}</h4>
+              <small class="text-muted">
+                {{ hospitalizedData.hospitalizedDelta }}</small
+              >
+            </div>
+            <table class="text-left">
+              <tr>
+                <td class="pr-1">Potvrdený covid19:</td>
+                <td>
+                  {{ hospitalizedData.confirmedHospitalized
+                  }}<small class="text-muted">{{
+                    hospitalizedData.confirmedHospitalizedDelta
+                  }}</small>
+                </td>
+              </tr>
+              <tr>
+                <td class="pr-1">Na JIS:</td>
+                <td>
+                  {{ hospitalizedData.confirmedHospitalizedIcu
+                  }}<small class="text-muted">{{
+                    hospitalizedData.confirmedHospitalizedIcuDelta
+                  }}</small>
+                </td>
+              </tr>
+              <tr>
+                <td class="pr-1">Na pľúcnej ventilácií:</td>
+                <td>
+                  {{ hospitalizedData.confirmedHospitalizedVentilation
+                  }}<small class="text-muted">{{
+                    hospitalizedData.confirmedHospitalizedVentilationDelta
+                  }}</small>
+                </td>
+              </tr>
+            </table>
+          </div>
+        </BCard>
+      </BCol>
     </BRow>
   </div>
 </template>
@@ -54,7 +96,7 @@ import {
 import c3, { ChartConfiguration, PrimitiveArray } from "c3";
 import { format, subDays } from "date-fns";
 
-const MEDIAN_GRAPH_DAYS = 8
+const MEDIAN_GRAPH_DAYS = 8;
 
 @Component({ components: { BRow, BCol, BCard } })
 export default class Summary extends Vue {
@@ -98,38 +140,37 @@ export default class Summary extends Vue {
         value: formatNumber(this.getActive(0)),
         delta: this.formatDelta(this.getActive(0) - this.getActive(1)),
       },
-      {
-        title: "Hospitalizovaných",
-        value: formatNumber(lastLogs[0].hospitalized),
-        delta: this.formatDelta(
-          lastLogs[0].hospitalized - lastLogs[1].hospitalized
-        ),
-      },
-      {
-        title: "Potvrdených Hospitalizovaných",
-        value: formatNumber(lastLogs[0].confirmed_hospitalized),
-        delta: this.formatDelta(
-          lastLogs[0].confirmed_hospitalized -
-            lastLogs[1].confirmed_hospitalized
-        ),
-      },
-      {
-        title: "Na JIS",
-        value: formatNumber(lastLogs[0].confirmed_hospitalized_icu),
-        delta: this.formatDelta(
-          lastLogs[0].confirmed_hospitalized_icu -
-            lastLogs[1].confirmed_hospitalized_icu
-        ),
-      },
-      {
-        title: "Na pľúcnej ventilácií",
-        value: formatNumber(lastLogs[0].confirmed_hospitalized_ventilation),
-        delta: this.formatDelta(
-          lastLogs[0].confirmed_hospitalized_ventilation -
-            lastLogs[1].confirmed_hospitalized_ventilation
-        ),
-      },
     ];
+  }
+
+  private get hospitalizedData() {
+    return {
+      hospitalized: formatNumber(this.lastLogs[0].hospitalized),
+      hospitalizedDelta: this.formatDelta(
+        this.lastLogs[0].hospitalized - this.lastLogs[1].hospitalized
+      ),
+      confirmedHospitalized: formatNumber(
+        this.lastLogs[0].confirmed_hospitalized
+      ),
+      confirmedHospitalizedDelta: this.formatDelta(
+        this.lastLogs[0].confirmed_hospitalized -
+          this.lastLogs[1].confirmed_hospitalized
+      ),
+      confirmedHospitalizedIcu: formatNumber(
+        this.lastLogs[0].confirmed_hospitalized_icu
+      ),
+      confirmedHospitalizedIcuDelta: this.formatDelta(
+        this.lastLogs[0].confirmed_hospitalized_icu -
+          this.lastLogs[1].confirmed_hospitalized_icu
+      ),
+      confirmedHospitalizedVentilation: formatNumber(
+        this.lastLogs[0].confirmed_hospitalized_ventilation
+      ),
+      confirmedHospitalizedVentilationDelta: this.formatDelta(
+        this.lastLogs[0].confirmed_hospitalized_ventilation -
+          this.lastLogs[1].confirmed_hospitalized_ventilation
+      ),
+    };
   }
 
   private formatDelta(value: number): string {
