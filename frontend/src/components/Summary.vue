@@ -1,9 +1,10 @@
 <template>
-  <div v-if="this.infectedLog.length" class="summary">
+  <div class="summary">
     <BRow class="align-content-stretch">
       <BCol md="4" sm="12" class="mb-3">
         <BCard header="Aktuálny kĺzavý medián" align="center" class="h-100">
           <div
+            v-if="this.infectedLog.length"
             class="d-flex align-items-center justify-content-center h-100"
           >
             <div>
@@ -144,6 +145,9 @@ export default class Summary extends Vue {
   }
 
   private get hospitalizedData() {
+    if (!this.lastLogs.length) {
+      return {};
+    }
     return {
       hospitalized: formatNumber(this.lastLogs[0].hospitalized),
       hospitalizedDelta: this.formatDelta(
