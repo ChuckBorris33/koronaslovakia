@@ -8,7 +8,7 @@
             class="d-flex align-items-center justify-content-center h-100"
           >
             <div>
-              <h3 class="d-inline">{{ lastLogs[0].median }}</h3>
+              <h1 class="median d-inline">{{ lastLogs[0].median }}</h1>
               <small class="text-muted">
                 {{
                   formatDelta(lastLogs[0].median - lastLogs[1].median)
@@ -246,6 +246,10 @@ export default class Summary extends Vue {
 .summary {
   margin-bottom: 4em;
   min-height: 250px;
+}
+
+.median {
+  font-size: 5em;
 }
 
 #medianGraph {
