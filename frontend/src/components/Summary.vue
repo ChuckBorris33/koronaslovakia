@@ -54,6 +54,8 @@ import {
 import c3, { ChartConfiguration, PrimitiveArray } from "c3";
 import { format, subDays } from "date-fns";
 
+const MEDIAN_GRAPH_DAYS = 8
+
 @Component({ components: { BRow, BCol, BCard } })
 export default class Summary extends Vue {
   private infectedLog: InfectedLog[] = [];
@@ -175,7 +177,7 @@ export default class Summary extends Vue {
           height: 200,
         },
       },
-      7
+      MEDIAN_GRAPH_DAYS
     );
   }
 
@@ -183,7 +185,7 @@ export default class Summary extends Vue {
     return this.infectedLog
       .filter((item) => {
         const date = new Date(item.date);
-        const from = subDays(new Date(), 7);
+        const from = subDays(new Date(), MEDIAN_GRAPH_DAYS);
         return date > from;
       })
       .map((item) => {
