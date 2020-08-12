@@ -1,0 +1,11 @@
+.main {
+  padding-top: 4em;
+}
+
+#main-navigation {
+  position: fixed;
+
+  .active {
+    font-weight: bold;
+  }
+}
