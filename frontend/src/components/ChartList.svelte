@@ -1,13 +1,16 @@
 <script lang="ts">
   import { Col, Nav, NavItem, NavLink, Row } from "sveltestrap";
+  import Summary from "./Summary.svelte";
+  import type { SvelteComponent } from "svelte";
 
   const charts: {
     title: string;
-    component?: any;
+    component?: SvelteComponent;
     id: string;
   }[] = [
     {
       title: "Súhrn",
+      component: Summary,
       id: "summary",
     },
   ];
