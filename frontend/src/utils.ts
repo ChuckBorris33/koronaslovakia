@@ -1,6 +1,6 @@
 import _ from "lodash";
-import { format } from "date-fns";
-import type { ChartConfiguration, PrimitiveArray } from "c3";
+import { format, subDays } from "date-fns";
+import type { ChartConfiguration, PrimitiveArray, Data } from "c3";
 import type { InfectedLog, SummaryValue } from "./types";
 import { InfectedLogDataKey } from "./types";
 
@@ -111,4 +111,59 @@ export function getActiveSummaryValue(lastLogs: InfectedLog[]): SummaryValue {
     value: formatNumber(lastActive),
     delta: formatSummaryDelta(lastActive - beforeActive),
   };
+}
+
+export function getInfectedChartRows(
+  logs: InfectedLog[],
+  timespan: number
+): PrimitiveArray[] {
+  const data = logs
+    .filter((item) => {
+      if (timespan < 0) {
+        return true;
+      }
+      const date = new Date(item.date);
+      const from = subDays(new Date(), timespan);
+      return date > from;
+    })
+    .map((item) => {
+      const date = new Date(item.date);
+      const dateString: string = format(date, "yyyy-MM-dd");
+      return [
+        dateString,
+        item[InfectedLogDataKey.INFECTED],
+        item[InfectedLogDataKey.INFECTED] -
+          item[InfectedLogDataKey.CURED] -
+          item[InfectedLogDataKey.DEATHS],
+      ];
+    });
+  return [["Dátum", "Nakazených", "Aktívnych"], ...data];
+}
+
+export function getOutcomeChartRows(
+  logs: InfectedLog[],
+  timespan: number
+): PrimitiveArray[] {
+  const data = logs
+    .filter(
+      (item) =>
+        item[InfectedLogDataKey.CURED] || item[InfectedLogDataKey.DEATHS]
+    )
+    .filter((item) => {
+      if (timespan < 0) {
+        return true;
+      }
+      const date = new Date(item.date);
+      const from = subDays(new Date(), timespan);
+      return date > from;
+    })
+    .map((item) => {
+      const date = new Date(item.date);
+      return [
+        format(date, "yyyy-MM-dd"),
+        item[InfectedLogDataKey.CURED],
+        item[InfectedLogDataKey.DEATHS],
+      ];
+    });
+  return [["Dátum", "Vyliečení", "Úmrtia"], ...data];
 }

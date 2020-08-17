@@ -1,5 +1,8 @@
 <script lang="ts">
   import { Card, CardBody, CardHeader, CardTitle, Col, Row } from "sveltestrap";
+  import { format } from "date-fns";
+  import c3 from "c3";
+
   import {
     formatNumber,
     getSummaryValue,
@@ -9,13 +12,12 @@
   } from "../utils";
   import { infectedLog } from "../store";
   import { InfectedLogDataKey } from "../types";
-  import { format } from "date-fns";
-  import c3 from "c3";
 
   import type { SummaryValue, InfectedLog } from "../types";
   import type { ChartConfiguration, PrimitiveArray } from "c3";
 
   export let id: string = "";
+  export let title: string = "";
 
   let medianCard: SummaryValue = {
     title: "Aktuálny kĺzavý medián",
@@ -101,6 +103,13 @@
     c3.generate(getMedianChartConfig(lastLogs));
   }
 </script>
+
+<style lang="scss">
+  .summary {
+    margin-bottom: 4em;
+    min-height: 250px;
+  }
+</style>
 
 <div {id} class="summary">
   <Row class="align-content-stretch">

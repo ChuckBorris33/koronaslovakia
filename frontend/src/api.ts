@@ -2,7 +2,7 @@ import axios, { AxiosResponse } from "axios";
 import type { InfectedLogResult } from "./types";
 
 const api = axios.create({
-  baseURL: process.env.API_BASE
+  baseURL: process.env.API_BASE,
 });
 
 export async function fetchInfectedLog(): Promise<

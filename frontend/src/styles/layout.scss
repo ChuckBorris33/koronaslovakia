@@ -9,3 +9,11 @@
     font-weight: bold;
   }
 }
+
+.c3.hideGraphPoints {
+  .c3-chart-lines {
+    .c3-circle {
+      display: none;
+    }
+  }
+}
