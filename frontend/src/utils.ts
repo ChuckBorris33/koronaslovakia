@@ -1,8 +1,10 @@
 import _ from "lodash";
 import { format, subDays } from "date-fns";
-import type { ChartConfiguration, PrimitiveArray, Data } from "c3";
-import type { InfectedLog, SummaryValue } from "./types";
+
 import { InfectedLogDataKey } from "./types";
+
+import type { ChartConfiguration, PrimitiveArray } from "c3";
+import type { InfectedLog, InfectedIncreaseLog, SummaryValue } from "./types";
 
 export function formatNumber(value: number): string {
   const valueStr = value.toString();
@@ -166,4 +168,48 @@ export function getOutcomeChartRows(
       ];
     });
   return [["Dátum", "Vyliečení", "Úmrtia"], ...data];
+}
+
+export function getTestedChartRows(
+  logs: InfectedLog[],
+  timespan: number
+): PrimitiveArray[] {
+  const data = logs
+    .filter((item) => {
+      if (timespan < 0) {
+        return true;
+      }
+      const date = new Date(item.date);
+      const from = subDays(new Date(), timespan);
+      return date > from;
+    })
+    .map((item) => {
+      const date = new Date(item.date);
+      return [format(date, "yyyy-MM-dd"), item[InfectedLogDataKey.TESTS]];
+    });
+  return [["Dátum", "Počet testov"], ...data];
+}
+
+export function getTestedPerDayChartRows(
+  logs: InfectedIncreaseLog[],
+  timespan: number
+) {
+  const data = logs
+    .filter((item) => {
+      if (timespan < 0) {
+        return true;
+      }
+      const date = new Date(item.date);
+      const from = subDays(new Date(), timespan);
+      return date > from;
+    })
+    .map((item) => {
+      const date = new Date(item.date);
+      return [
+        format(date, "yyyy-MM-dd"),
+        item.infected_increase,
+        item.tests_increase - item.infected_increase,
+      ];
+    });
+  return [["Dátum", "Pozitívne", "Negatívne"], ...data];
 }

@@ -1,37 +1,38 @@
 <script lang="ts">
   import { Col, Nav, NavItem, NavLink, Row } from "sveltestrap";
 
-  import { getInfectedChartRows, getOutcomeChartRows } from "../utils";
+  import {
+    getInfectedChartRows,
+    getOutcomeChartRows,
+    getTestedChartRows,
+  } from "../utils";
   import Summary from "./Summary.svelte";
-  import BasicLineChart from "./BasicLineChart.svelte";
-  import type { SvelteComponent } from "svelte";
+  import LineChart from "./LineChart.svelte";
+  import TestedPerDayChart from "./TestedPerDayChart.svelte";
 
   const charts: {
     id: string;
     title: string;
-    component: SvelteComponent;
-    otherProps?: Record<string, any>;
   }[] = [
     {
       id: "summary",
       title: "Súhrn",
-      component: Summary,
     },
     {
       id: "infected-count",
       title: "Počet nakazených",
-      component: BasicLineChart,
-      otherProps: {
-        chartDataGetter: getInfectedChartRows,
-      },
     },
     {
       id: "outcome-count",
       title: "Výsledky ochorenia",
-      component: BasicLineChart,
-      otherProps: {
-        chartDataGetter: getOutcomeChartRows,
-      },
+    },
+    {
+      id: "tested-count",
+      title: "Počet testov",
+    },
+    {
+      id: "infected-increase-chart",
+      title: "Výsledky testov za deň",
     },
   ];
 </script>
@@ -49,14 +50,10 @@
     </Nav>
   </Col>
   <Col md="9" xs="12">
-    {#each charts as chart}
-      {#if chart.component}
-        <svelte:component
-          this={chart.component}
-          id={chart.id}
-          title={chart.title}
-          {...chart.otherProps || {}} />
-      {/if}
-    {/each}
+    <Summary {...charts[0]} />
+    <LineChart {...charts[1]} chartDataGetter={getInfectedChartRows} />
+    <LineChart {...charts[2]} chartDataGetter={getOutcomeChartRows} />
+    <LineChart {...charts[3]} chartDataGetter={getTestedChartRows} />
+    <TestedPerDayChart {...charts[4]} />
   </Col>
 </Row>

@@ -10,6 +10,11 @@ export enum InfectedLogDataKey {
   CONFIRMED_HOSPITALIZED_VENTILATION = "confirmed_hospitalized_ventilation",
 }
 
+export enum InfectedIncreaseLogDataKey {
+  INFECTED = "infected_increase",
+  TESTS = "tests_increase",
+}
+
 export type InfectedLog = {
   date: string;
   [InfectedLogDataKey.INFECTED]: number;
@@ -23,7 +28,14 @@ export type InfectedLog = {
   [InfectedLogDataKey.CONFIRMED_HOSPITALIZED_VENTILATION]: number;
 };
 
+export type InfectedIncreaseLog = {
+  date: string;
+  [InfectedIncreaseLogDataKey.INFECTED]: number;
+  [InfectedIncreaseLogDataKey.TESTS]: number;
+};
+
 export type InfectedLogResult = { results: InfectedLog[] };
+export type InfectedIncreaseLogResult = { results: InfectedIncreaseLog[] };
 
 export type SummaryValue = {
   title: string;

@@ -7,13 +7,13 @@
     DataPoint,
   } from "c3";
 
-  import ChartLayout from "./ChartLayout.svelte";
   import { infectedLog } from "../store";
   import {
     formatNumber,
     getChartConfig,
     getTooltipWithDeltaFormatter,
   } from "../utils";
+  import ChartLayout from "./ChartLayout.svelte";
 
   import type { InfectedLog } from "../types";
 
