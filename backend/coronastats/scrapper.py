@@ -21,7 +21,10 @@ def _normalize_number(number):
     return int(re.sub("[^0-9]+", "", number))
 
 
-def get_korona_gov_data(last_date: typing.Optional[date] = None):
+def get_korona_gov_data(
+    last_date: typing.Optional[date] = None,
+    overwrite_updated_at: typing.Optional[date] = None,
+):
     try:
         result = requests.get(
             "https://korona.gov.sk/koronavirus-na-slovensku-v-cislach/"
@@ -37,9 +40,9 @@ def get_korona_gov_data(last_date: typing.Optional[date] = None):
         )
         rows = container.div.findAll("div", recursive=False)
         date_text = rows[0].div.div.p.text
-        updated_at = datetime.strptime(
+        updated_at = overwrite_updated_at or (datetime.strptime(
             date_text, "Aktualizované %d. %m. %Y"
-        ).date() - timedelta(days=1)
+        ).date() - timedelta(days=1))
         if last_date is None or updated_at > last_date:
             infected = _normalize_number(rows[1].findAll("h3")[1].text)
             tested = _normalize_number(rows[1].findAll("h3")[0].text)

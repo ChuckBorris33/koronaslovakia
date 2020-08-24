@@ -20,9 +20,10 @@ def backup_scrap_last_day_counts():
     get_corona_counts()
 
 
+@click.option("--date", default=None, help="Date of log")
 @app.cli.command("scrap_korona_gov_data")
-def scrap_korona_gov_data():
-    get_korona_gov_data()
+def scrap_korona_gov_data(date=None):
+    get_korona_gov_data(None, overwrite_updated_at=date)
 
 
 @app.cli.command("scrap_location_counts")
