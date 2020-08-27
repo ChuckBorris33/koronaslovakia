@@ -4,7 +4,14 @@ import { format, subDays } from "date-fns";
 import { InfectedLogDataKey } from "./types";
 
 import type { ChartConfiguration, PrimitiveArray } from "c3";
-import type { InfectedLog, InfectedIncreaseLog, SummaryValue } from "./types";
+import type {
+  InfectedLog,
+  InfectedIncreaseLog,
+  LastLogByLocation,
+  SummaryValue,
+  TableColumn,
+  SortValue,
+} from "./types";
 
 export function formatNumber(value: number): string {
   const valueStr = value.toString();
@@ -212,4 +219,49 @@ export function getTestedPerDayChartRows(
       ];
     });
   return [["Dátum", "Pozitívne", "Negatívne"], ...data];
+}
+
+export function getCurrentSort(
+  columns: Record<string, TableColumn>
+): SortValue {
+  const sortColumnKey: string = _.findKey(
+    columns,
+    (column) => column.sort !== null
+  );
+  const sortType = columns[sortColumnKey].sort;
+  return {
+    sortColumnKey,
+    sortType,
+  };
+}
+
+export function getInfectedByLocationTableRows(
+  data: LastLogByLocation[],
+  columns: Record<string, TableColumn>,
+  filter: string
+): LastLogByLocation[] {
+  const allRows = data.map((item) => {
+    return {
+      ...item,
+      last_updated: new Date(item.last_updated),
+    };
+  });
+
+  const filteredRows = allRows.filter((item) => {
+    const filterValue = normalizeString(filter);
+    return normalizeString(item.location).startsWith(filterValue);
+  });
+
+  const { sortColumnKey, sortType } = getCurrentSort(columns);
+  let sortedRows = _.sortBy(filteredRows, [sortColumnKey]);
+  if (sortType == "desc") {
+    sortedRows = _.reverse(sortedRows);
+  }
+
+  return sortedRows.map((item) => {
+    return {
+      ...item,
+      last_updated: format(item.last_updated, "d.M.yyyy"),
+    };
+  });
 }

@@ -34,11 +34,35 @@ export type InfectedIncreaseLog = {
   [InfectedIncreaseLogDataKey.TESTS]: number;
 };
 
+export type LastLogByLocation = {
+  location: string;
+  last_updated: string;
+  infected: number;
+  cured: number;
+  deaths: number;
+  infected_delta: number;
+  cured_delta: number;
+  deaths_delta: number;
+  infected_females: number;
+  infected_males: number;
+};
+
 export type InfectedLogResult = { results: InfectedLog[] };
 export type InfectedIncreaseLogResult = { results: InfectedIncreaseLog[] };
+export type LastLogByLocationResult = { results: LastLogByLocation[] };
 
 export type SummaryValue = {
   title: string;
   value: string;
   delta: string;
+};
+
+export type TableColumn = {
+  title: string;
+  sort: null | "asc" | "desc";
+};
+
+export type SortValue = {
+  sortColumnKey: string;
+  sortType: string;
 };

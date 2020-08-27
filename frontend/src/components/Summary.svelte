@@ -17,7 +17,7 @@
   import type { ChartConfiguration, PrimitiveArray } from "c3";
 
   export let id: string = "";
-  export let title: string = "";
+  export const title: string = "";
 
   let medianCard: SummaryValue = {
     title: "Aktuálny kĺzavý medián",

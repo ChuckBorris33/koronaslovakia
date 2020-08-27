@@ -9,6 +9,7 @@
   import Summary from "./Summary.svelte";
   import LineChart from "./LineChart.svelte";
   import TestedPerDayChart from "./TestedPerDayChart.svelte";
+  import InfectedByLocationTable from "./InfectedByLocationTable.svelte";
 
   const charts: {
     id: string;
@@ -34,6 +35,10 @@
       id: "infected-increase-chart",
       title: "Výsledky testov za deň",
     },
+    {
+      id: "by-location-table",
+      title: "Prehľad podľa okresov",
+    },
   ];
 </script>
 
@@ -55,5 +60,6 @@
     <LineChart {...charts[2]} chartDataGetter={getOutcomeChartRows} />
     <LineChart {...charts[3]} chartDataGetter={getTestedChartRows} />
     <TestedPerDayChart {...charts[4]} />
+    <InfectedByLocationTable />
   </Col>
 </Row>
