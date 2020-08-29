@@ -1,10 +1,11 @@
-import Vue from "vue";
-import App from "./App.vue";
+import App from "./App.svelte";
 
+import "./styles/global.scss";
 import "bootstrap";
 
-Vue.config.productionTip = false;
+const app = new App({
+  target: document.body,
+  props: {},
+});
 
-new Vue({
-  render: (h) => h(App),
-}).$mount("#app");
+export default app;

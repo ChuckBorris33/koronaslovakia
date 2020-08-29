@@ -1,0 +1,23 @@
+.main {
+  padding-top: 4em;
+}
+
+#main-navigation {
+  position: fixed;
+
+  .active {
+    font-weight: bold;
+  }
+}
+
+.c3.hideGraphPoints {
+  .c3-chart-lines {
+    .c3-circle {
+      display: none;
+    }
+  }
+}
+
+.cursor-pointer {
+  cursor: pointer;
+}

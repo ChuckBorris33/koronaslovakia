@@ -1,16 +1,14 @@
 import axios, { AxiosResponse } from "axios";
-import cachios from "cachios";
-import {
-  InfectedIncreaseLogResult,
-  InfectedLogResult,
-  LastLogByLocationResult,
-} from "@/types";
 
-const api = cachios.create(
-  axios.create({
-    baseURL: process.env.VUE_APP_API_BASE,
-  })
-);
+import type {
+  InfectedLogResult,
+  InfectedIncreaseLogResult,
+  LastLogByLocationResult,
+} from "./types";
+
+const api = axios.create({
+  baseURL: process.env.API_BASE,
+});
 
 export async function fetchInfectedLog(): Promise<
   AxiosResponse<InfectedLogResult>
