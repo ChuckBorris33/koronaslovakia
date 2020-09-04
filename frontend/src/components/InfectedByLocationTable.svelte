@@ -105,23 +105,25 @@
     <h3>Prehľad podľa okresov</h3>
   </div>
   <div id="by-location-table">
-    <Form>
-      <FormGroup class="row">
-        <Label for="infectedByLocationFilter" class="sr-only">Hľadať</Label>
-        <Input
-          id="infectedByLocationFilter"
-          class="col-md-4 col-sm-12"
-          placeholder="Hľadať"
-          readonly={false}
-          on:input={(e) => setFilter(e.target.value)} />
-        {#if loading}
-          <div class="col-form-label pl-3 d-sm-none d-md-inline-block">
-            <Spinner size="sm" color="primary" />
-            <span class="sr-only">Hľadám...</span>
-          </div>
-        {/if}
-      </FormGroup>
-    </Form>
+    <div class="px-3">
+        <Form>
+          <FormGroup class="row">
+            <Label for="infectedByLocationFilter" class="sr-only">Hľadať</Label>
+            <Input
+              id="infectedByLocationFilter"
+              class="col-md-4 col-sm-12"
+              placeholder="Hľadať"
+              readonly={false}
+              on:input={(e) => setFilter(e.target.value)} />
+            {#if loading}
+              <div class="col-form-label pl-3 d-sm-none d-md-inline-block">
+                <Spinner size="sm" color="primary" />
+                <span class="sr-only">Hľadám...</span>
+              </div>
+            {/if}
+          </FormGroup>
+        </Form>
+    </div>
   </div>
   <Table>
     <thead role="rowgroup">

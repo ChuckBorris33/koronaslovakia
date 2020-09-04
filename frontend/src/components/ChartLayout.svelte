@@ -23,7 +23,7 @@
   }
 </style>
 
-<div class="chart">
+<div class="chart" {id}>
   <div class="text-center pb-3">
     <h3>{title}</h3>
   </div>

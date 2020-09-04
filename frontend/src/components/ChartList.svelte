@@ -42,8 +42,8 @@
   ];
 </script>
 
-<Row class="w-100">
-  <Col xs="3" class="d-none d-md-block">
+<div class="row chartsContainer">
+  <Col sm="3" class="d-none d-md-block">
     <Nav id="main-navigation" vertical>
       {#each charts as chart, index}
         <NavItem>
@@ -54,12 +54,12 @@
       {/each}
     </Nav>
   </Col>
-  <Col md="9" xs="12">
+  <div class="col col-md-9 col-sm-12">
     <Summary {...charts[0]} />
     <LineChart {...charts[1]} chartDataGetter={getInfectedChartRows} />
     <LineChart {...charts[2]} chartDataGetter={getOutcomeChartRows} />
     <LineChart {...charts[3]} chartDataGetter={getTestedChartRows} />
     <TestedPerDayChart {...charts[4]} />
     <InfectedByLocationTable />
-  </Col>
-</Row>
+  </div>
+</div>

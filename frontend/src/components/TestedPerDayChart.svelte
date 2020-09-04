@@ -40,7 +40,7 @@
     // Replacing rows contens so tooltip formatter works correctly
     rows.splice(0, Infinity, ...newRows);
     return getChartConfig({
-      bindto: `#${id}`,
+      bindto: `#${id}_graph`,
       data: {
         type: "bar",
         rows,
@@ -78,5 +78,5 @@
 </script>
 
 <ChartLayout {id} {title} bind:timespan>
-  <div {id} />
+  <div id={`${id}_graph`} />
 </ChartLayout>
