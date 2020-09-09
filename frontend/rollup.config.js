@@ -7,6 +7,7 @@ import sveltePreprocess from 'svelte-preprocess'
 import typescript from '@rollup/plugin-typescript'
 import postcss from 'rollup-plugin-postcss'
 import replace from '@rollup/plugin-replace'
+import visualizer from 'rollup-plugin-visualizer';
 import envify  from "process-envify"
 import dotenv from "dotenv"
 
@@ -52,6 +53,7 @@ export default {
     file: 'public/build/bundle.js',
   },
   plugins: [
+    visualizer(),
     replace({
       ...envify(process.env),
     }),
