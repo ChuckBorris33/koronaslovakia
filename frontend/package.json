@@ -45,7 +45,6 @@
     "jquery": "^3.5.1",
     "lodash": "^4.17.20",
     "popper.js": "^1.16.1",
-    "svelte": "^3.0.0",
-    "sveltestrap": "^3.7.3"
+    "svelte": "^3.0.0"
   }
 }

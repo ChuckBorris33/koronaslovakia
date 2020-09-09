@@ -1,12 +1,4 @@
 <script lang="ts">
-  import {
-    Container,
-    Navbar,
-    NavbarBrand,
-    Nav,
-    NavItem,
-    NavLink,
-  } from "sveltestrap";
   import Icon from "fa-svelte";
   import { faGithub } from "@fortawesome/free-brands-svg-icons";
   import ChartList from "./components/ChartList.svelte";
@@ -16,18 +8,21 @@
   <title>Korona</title>
   <link rel="icon" type="image/x-icon" href="/favicon.ico" />
 </svelte:head>
-<Navbar toggleable="lg" class="navbar-dark bg-primary">
-  <Container>
-    <NavbarBrand href="#">Koronavírus na slovensku</NavbarBrand>
-    <Nav class="ml-auto" navbar>
-      <NavItem>
-        <NavLink href="https://github.com/ChuckBorris33/koronaslovakia">
+<div class="navbar navbar-expand-lg navbar-dark bg-primary">
+  <div class="container">
+    <a href="#" class="navbar-brand">Koronavírus na slovensku</a>
+    <ul class="navbar-nav ml-auto">
+      <li class="nav-item">
+        <a
+          class="nav-link"
+          href="https://github.com/ChuckBorris33/koronaslovakia">
           <Icon icon={faGithub} />
-        </NavLink>
-      </NavItem>
-    </Nav>
-  </Container>
-</Navbar>
-<Container class="main">
+          <span class="sr-only">Github</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</div>
+<div class="container main">
   <ChartList />
-</Container>
+</div>

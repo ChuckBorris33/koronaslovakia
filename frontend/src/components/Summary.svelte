@@ -1,5 +1,4 @@
 <script lang="ts">
-  import { Card, CardBody, CardHeader, CardTitle, Col, Row } from "sveltestrap";
   import { format } from "date-fns";
   import c3 from "c3";
 
@@ -112,41 +111,41 @@
 </style>
 
 <div {id} class="summary">
-  <Row class="align-content-stretch">
-    <Col md="4" sm="12" class="mb-3">
-      <Card class="h-100 text-center">
-        <CardHeader>
-          <CardTitle class="m-0">{medianCard.title}</CardTitle>
-        </CardHeader>
-        <CardBody>
+  <div class="row align-content-stretch">
+    <div class="col col-md-4 col-sm-12 mb-3">
+      <div class="card h-100 text-center">
+        <div class="card-header">
+          <div class="card-title m-0">{medianCard.title}</div>
+        </div>
+        <div class="card-body">
           <div class="d-flex align-items-center justify-content-center h-100">
             <div>
               <h1 class="median d-inline">{medianCard.value}</h1>
               <small class="text-muted">{medianCard.delta}</small>
             </div>
           </div>
-        </CardBody>
-      </Card>
-    </Col>
-    <Col md="8" sm="12" class="mb-3">
-      <Card class="h-100 text-center">
-        <CardHeader>
-          <CardTitle class="m-0">Vývoj kĺzavého mediánu</CardTitle>
-        </CardHeader>
-        <CardBody>
+        </div>
+      </div>
+    </div>
+    <div class="col col-md-8 col-sm-12 mb-3">
+      <div class="card h-100 text-center">
+        <div class="card-header">
+          <div class="card-title m-0">Vývoj kĺzavého mediánu</div>
+        </div>
+        <div class="card-body">
           <div id="medianGraph" />
-        </CardBody>
-      </Card>
-    </Col>
-  </Row>
-  <Row class="align-content-stretch">
-    {#each simpleCards as card, index}
-      <Col md="4" sm="12" class="mb-3">
-        <Card class="h-100 text-center">
-          <CardHeader>
-            <CardTitle class="m-0">{card.title}</CardTitle>
-          </CardHeader>
-          <CardBody>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="row align-content-stretch">
+    {#each simpleCards as card}
+      <div class="col col-md-4 col-sm-12 mb-3">
+        <div class="card h-100 text-center">
+          <div class="card-header">
+            <div class="card-title m-0">{card.title}</div>
+          </div>
+          <div class="card-body">
             <div
               class="py-4 d-flex align-items-center justify-content-center h-100">
               <div>
@@ -154,16 +153,16 @@
                 <small class="text-muted">{card.delta}</small>
               </div>
             </div>
-          </CardBody>
-        </Card>
-      </Col>
+          </div>
+        </div>
+      </div>
     {/each}
-    <Col md="4" sm="12" class="mb-3">
-      <Card class="h-100 text-center">
-        <CardHeader>
-          <CardTitle class="m-0">{hospitalizedCard.main.title}</CardTitle>
-        </CardHeader>
-        <CardBody>
+    <div class="col col-md-4 col-sm-12 mb-3">
+      <div class="card h-100 text-center">
+        <div class="card-header">
+          <div class="card-title m-0">{hospitalizedCard.main.title}</div>
+        </div>
+        <div class="card-body">
           <div
             class="d-flex flex-column align-items-center justify-content-center
             h-100">
@@ -183,8 +182,8 @@
               {/each}
             </table>
           </div>
-        </CardBody>
-      </Card>
-    </Col>
-  </Row>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>

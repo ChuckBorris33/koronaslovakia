@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { Col, Nav, NavItem, NavLink, Row } from "sveltestrap";
-
   import {
     getInfectedChartRows,
     getOutcomeChartRows,
@@ -42,18 +40,18 @@
   ];
 </script>
 
-<div class="row chartsContainer">
-  <Col sm="3" class="d-none d-md-block">
-    <Nav id="main-navigation" vertical>
+<div class="row">
+  <div class="col com-md-3 d-none d-md-block">
+    <ul class="nav flex-column" id="main-navigation">
       {#each charts as chart, index}
-        <NavItem>
-          <NavLink class="nav-link" active={index === 0} href={`#${chart.id}`}>
+        <li class="nav-item">
+          <a class="nav-link" class:active={index === 0} href={`#${chart.id}`}>
             {chart.title}
-          </NavLink>
-        </NavItem>
+          </a>
+        </li>
       {/each}
-    </Nav>
-  </Col>
+    </ul>
+  </div>
   <div class="col col-md-9 col-sm-12">
     <Summary {...charts[0]} />
     <LineChart {...charts[1]} chartDataGetter={getInfectedChartRows} />

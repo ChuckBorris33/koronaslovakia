@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { each } from "svelte/internal";
-
   export let id: string;
   export let title: string;
   export let timespan: number;

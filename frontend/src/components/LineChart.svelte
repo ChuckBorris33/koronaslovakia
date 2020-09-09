@@ -1,11 +1,5 @@
 <script lang="ts">
-  import c3, {
-    ChartConfiguration,
-    PrimitiveArray,
-    ChartAPI,
-    ChartInternal,
-    DataPoint,
-  } from "c3";
+  import c3, { ChartConfiguration, PrimitiveArray, ChartAPI } from "c3";
 
   import { infectedLog } from "../store";
   import {

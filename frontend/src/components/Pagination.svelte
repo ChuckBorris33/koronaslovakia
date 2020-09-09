@@ -1,6 +1,4 @@
 <script lang="ts">
-  import { Pagination, PaginationItem, PaginationLink } from "sveltestrap";
-
   export let limit: number;
   export let offset: number;
   export let length: number;
@@ -26,29 +24,51 @@
 </script>
 
 <div class="d-flex w-100 justify-content-end">
-  <Pagination>
-    <PaginationItem disabled={actualPage == 1}>
-      <PaginationLink first on:click={(event) => setOffset(event, 1)} />
-    </PaginationItem>
-    <PaginationItem disabled={actualPage == 1}>
-      <PaginationLink
-        previous
-        on:click={(event) => setOffset(event, actualPage - 1)} />
-    </PaginationItem>
-    {#each pages as page}
-      <PaginationItem active={page == actualPage}>
-        <PaginationLink on:click={(event) => setOffset(event, page)}>
-          {page}
-        </PaginationLink>
-      </PaginationItem>
-    {/each}
-    <PaginationItem disabled={actualPage == pageCount}>
-      <PaginationLink
-        next
-        on:click={(event) => setOffset(event, actualPage + 1)} />
-    </PaginationItem>
-    <PaginationItem disabled={actualPage == pageCount}>
-      <PaginationLink last on:click={(event) => setOffset(event, pageCount)} />
-    </PaginationItem>
-  </Pagination>
+  <nav aria-label="pagination">
+    <ul class="pagination">
+      <li class="page-item" class:disabled={actualPage == 1}>
+        <a href="#" class="page-link" on:click={(event) => setOffset(event, 1)}>
+          <span aria-hidden="true">{'\u00ab'}</span>
+          <span class="sr-only">Prvá</span>
+        </a>
+      </li>
+      <li class="page-item" class:disabled={actualPage == 1}>
+        <a
+          href="#"
+          class="page-link"
+          on:click={(event) => setOffset(event, actualPage - 1)}>
+          <span aria-hidden="true">{'\u2039'}</span>
+          <span class="sr-only">Predchádzajúca</span>
+        </a>
+      </li>
+      {#each pages as page}
+        <li class="page-item" class:active={page == actualPage}>
+          <a
+            href="#"
+            class="page-link"
+            on:click={(event) => setOffset(event, page)}>
+            {page}
+          </a>
+        </li>
+      {/each}
+      <li class="page-item" class:disabled={actualPage == pageCount}>
+        <a
+          href="#"
+          class="page-link"
+          on:click={(event) => setOffset(event, actualPage + 1)}>
+          <span aria-hidden="true">{'\u203A'}</span>
+          <span class="sr-only">Ďalšia</span>
+        </a>
+      </li>
+      <li class="page-item" class:disabled={actualPage == pageCount}>
+        <a
+          href="#"
+          class="page-link"
+          on:click={(event) => setOffset(event, pageCount)}>
+          <span aria-hidden="true">{'\u00bb'}</span>
+          <span class="sr-only">Posledná</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
 </div>

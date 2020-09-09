@@ -9,8 +9,8 @@
   import { infectedIncreaseLog } from "../store";
   import ChartLayout from "./ChartLayout.svelte";
 
-  export let title;
-  export let id;
+  export let title: string;
+  export let id: string;
 
   let timespan = 14;
   let rows: PrimitiveArray[] = [];

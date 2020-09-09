@@ -1,7 +1,5 @@
 <script lang="ts">
   import _ from "lodash";
-  import { format } from "date-fns";
-  import { Form, FormGroup, Input, Label, Spinner, Table } from "sveltestrap";
   import {
     faSortUp,
     faSortDown,
@@ -10,11 +8,7 @@
   import type { IconDefinition } from "@fortawesome/fontawesome-common-types";
   import Icon from "fa-svelte";
   import { lastLogByLocation } from "../store";
-  import {
-    getCurrentSort,
-    normalizeString,
-    getInfectedByLocationTableRows,
-  } from "../utils";
+  import { getInfectedByLocationTableRows } from "../utils";
   import Pagination from "./Pagination.svelte";
 
   import type { TableColumn, LastLogByLocation } from "../types";
@@ -82,10 +76,12 @@
   }
 
   function setFilter(value: string) {
+    loading = true;
     filter = value;
     _.debounce(() => {
       debouncedFilter = filter;
-    }, 400)();
+      loading = false;
+    }, 1000)();
     offset = 0;
   }
 
@@ -106,26 +102,30 @@
   </div>
   <div id="by-location-table">
     <div class="px-3">
-        <Form>
-          <FormGroup class="row">
-            <Label for="infectedByLocationFilter" class="sr-only">Hľadať</Label>
-            <Input
-              id="infectedByLocationFilter"
-              class="col-md-4 col-sm-12"
-              placeholder="Hľadať"
-              readonly={false}
-              on:input={(e) => setFilter(e.target.value)} />
-            {#if loading}
-              <div class="col-form-label pl-3 d-sm-none d-md-inline-block">
-                <Spinner size="sm" color="primary" />
+      <form class="form">
+        <div class="form-group row">
+          <label for="infectedByLocationFilter" class="sr-only">Hľadať</label>
+          <input
+            id="infectedByLocationFilter"
+            type="text"
+            class="form-control col-md-4 col-sm-12"
+            placeholder="Hľadať"
+            readonly={false}
+            on:input={(e) => setFilter(e.target.value)} />
+          {#if loading}
+            <div class="col-form-label pl-3 d-sm-none d-md-inline-block">
+              <div
+                role="status"
+                class="spinner-border spinner-border-sm text-primary">
                 <span class="sr-only">Hľadám...</span>
               </div>
-            {/if}
-          </FormGroup>
-        </Form>
+            </div>
+          {/if}
+        </div>
+      </form>
     </div>
   </div>
-  <Table>
+  <table class="table">
     <thead role="rowgroup">
       <tr>
         {#each Object.keys(columns) as key}
@@ -153,6 +153,6 @@
         </tr>
       {/each}
     </tbody>
-  </Table>
+  </table>
   <Pagination {limit} bind:offset length={rows.length} />
 </div>
