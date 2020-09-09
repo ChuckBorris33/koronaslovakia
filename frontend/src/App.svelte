@@ -10,7 +10,7 @@
 </svelte:head>
 <div class="navbar navbar-expand-lg navbar-dark bg-primary">
   <div class="container">
-    <a href="#" class="navbar-brand">Koronavírus na slovensku</a>
+    <a href="/" class="navbar-brand">Koronavírus na slovensku</a>
     <ul class="navbar-nav ml-auto">
       <li class="nav-item">
         <a

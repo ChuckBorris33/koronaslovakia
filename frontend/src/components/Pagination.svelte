@@ -27,47 +27,43 @@
   <nav aria-label="pagination">
     <ul class="pagination">
       <li class="page-item" class:disabled={actualPage == 1}>
-        <a href="#" class="page-link" on:click={(event) => setOffset(event, 1)}>
+        <button role="button" class="page-link" on:click={(event) => setOffset(event, 1)}>
           <span aria-hidden="true">{'\u00ab'}</span>
           <span class="sr-only">Prvá</span>
-        </a>
+        </button>
       </li>
       <li class="page-item" class:disabled={actualPage == 1}>
-        <a
-          href="#"
+        <button
           class="page-link"
           on:click={(event) => setOffset(event, actualPage - 1)}>
           <span aria-hidden="true">{'\u2039'}</span>
           <span class="sr-only">Predchádzajúca</span>
-        </a>
+        </button>
       </li>
       {#each pages as page}
         <li class="page-item" class:active={page == actualPage}>
-          <a
-            href="#"
+          <button
             class="page-link"
             on:click={(event) => setOffset(event, page)}>
             {page}
-          </a>
+          </button>
         </li>
       {/each}
       <li class="page-item" class:disabled={actualPage == pageCount}>
-        <a
-          href="#"
+        <button
           class="page-link"
           on:click={(event) => setOffset(event, actualPage + 1)}>
           <span aria-hidden="true">{'\u203A'}</span>
           <span class="sr-only">Ďalšia</span>
-        </a>
+        </button>
       </li>
       <li class="page-item" class:disabled={actualPage == pageCount}>
-        <a
-          href="#"
+        <button
           class="page-link"
           on:click={(event) => setOffset(event, pageCount)}>
           <span aria-hidden="true">{'\u00bb'}</span>
           <span class="sr-only">Posledná</span>
-        </a>
+        </button>
       </li>
     </ul>
   </nav>
