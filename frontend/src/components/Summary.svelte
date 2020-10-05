@@ -29,16 +29,16 @@
     subValues: [],
   };
 
-  function getChartDataRows(lastLogs: InfectedLog[]): PrimitiveArray[] {
-    return lastLogs.slice(0, 7).map((item) => {
+  function getChartDataRows(): PrimitiveArray[] {
+    return $infectedLog.slice(-7).map((item) => {
       const date = new Date(item.date);
       const dateString: string = format(date, "yyyy-MM-dd");
       return [dateString, item[InfectedLogDataKey.MEDIAN]];
     });
   }
 
-  function getMedianChartConfig(lastLogs: InfectedLog[]): ChartConfiguration {
-    const rows = [["Dátum", "Medián"], ...getChartDataRows(lastLogs)];
+  function getMedianChartConfig(): ChartConfiguration {
+    const rows = [["Dátum", "Medián"], ...getChartDataRows()];
     return getChartConfig({
       bindto: "#medianGraph",
       data: {
@@ -99,7 +99,7 @@
       "Aktuálny kĺzavý medián"
     );
 
-    c3.generate(getMedianChartConfig(lastLogs));
+    c3.generate(getMedianChartConfig());
   }
 </script>
 
