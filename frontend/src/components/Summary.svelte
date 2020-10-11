@@ -78,7 +78,7 @@
       subValues: [
         getSummaryValue(
           lastLogs,
-          InfectedLogDataKey.HOSPITALIZED,
+          InfectedLogDataKey.CONFIRMED_HOSPITALIZED,
           "Potvrdený covid19:"
         ),
         getSummaryValue(
