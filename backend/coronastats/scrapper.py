@@ -9,7 +9,7 @@ import coronastats
 import requests
 import schedule
 
-from bs4 import BeautifulSoup
+from bs4 import BeautifulSoup, Comment
 from flask import current_app
 
 from coronastats import db, cache
@@ -19,6 +19,19 @@ logger = current_app.logger.getChild("scrapper")
 
 def _normalize_number(number):
     return int(re.sub("[^0-9]+", "", number))
+
+
+def _find_comment(text, comment):
+    clean_text = str(text).strip()
+    return isinstance(text, Comment) and clean_text == comment
+
+def get_element_with_comment(container, comment):
+    return container.find(text=lambda t:_find_comment(t, comment)).find_parent()
+
+"""
+' REPLACE:koronastats-hospitalized-covid19 ', 
+' REPLACE:koronastats-hospitalized-covid19-intensive ', ' REPLACE:koronastats-hospitalized-covid19-ventilation ', 
+' REPLACE:koronastats-median ', """
 
 
 def get_korona_gov_data(
@@ -35,23 +48,24 @@ def get_korona_gov_data(
                 + "https://korona.gov.sk/koronavirus-na-slovensku-v-cislach/"
             )
         wrapper = BeautifulSoup(result.text, "html.parser")
-        container = (
-            wrapper.find("main").find("div", {"class": "govuk-width-container"}).div
+        c = (
+            wrapper.find("main")
+            .findAll("div", {"class": "govuk-width-container"})[1]
         )
-        rows = container.div.findAll("div", recursive=False)
-        date_text = rows[0].div.div.p.text
+        date_text = get_element_with_comment(c, "REPLACE:koronastats-last-update").text
         updated_at = overwrite_updated_at or (datetime.strptime(
             date_text, "Aktualizované %d. %m. %Y"
         ).date() - timedelta(days=1))
+        
         if last_date is None or updated_at > last_date:
-            infected = _normalize_number(rows[1].findAll("h3")[1].text)
-            tested = _normalize_number(rows[1].findAll("h3")[0].text)
-            cured = _normalize_number(rows[1].findAll("h3")[3].text)
-            deaths = _normalize_number(rows[1].findAll("h3")[2].text)
-            median = _normalize_number(rows[2].findAll("h3")[2].text)
-            hospitalized = _normalize_number(rows[2].findAll("h3")[0].text)
-            confirmed_hospitalized = _normalize_number(rows[2].findAll("h3")[1].text)
-            confirmed_hospitalized_text = rows[2].findAll("h3")[1].parent.p.text
+            infected = _normalize_number(get_element_with_comment(c, "REPLACE:koronastats-positives").text)
+            tested = _normalize_number(get_element_with_comment(c, "REPLACE:koronastats-lab-tests").text)
+            cured = _normalize_number(get_element_with_comment(c, "REPLACE:koronastats-cured").text)
+            deaths = _normalize_number(get_element_with_comment(c, "REPLACE:koronastats-deceased").text)
+            median = _normalize_number(get_element_with_comment(c, "REPLACE:koronastats-median").text)
+            hospitalized = _normalize_number(get_element_with_comment(c, "REPLACE:koronastats-hospitalized").text)
+            confirmed_hospitalized = _normalize_number(get_element_with_comment(c, "REPLACE:koronastats-hospitalized-covid19").text)
+            confirmed_hospitalized_text = get_element_with_comment(c, "REPLACE:koronastats-hospitalized-covid19-intensive").text
             confirmed_hospitalized_text_match = re.match(
                 (
                     r"Počet hospitalizovanýchs potvrdeným covid19z toho na "
