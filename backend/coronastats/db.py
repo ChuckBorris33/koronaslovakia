@@ -85,6 +85,19 @@ def get_log_by_date(log_date):
 def get_last_log_date() -> datetime.date:
     return CoronaLog.select(CoronaLog.date).order_by(CoronaLog.date.desc()).get().date
 
+def get_last_log() -> dict:
+    return CoronaLog.select(
+        CoronaLog.infected,
+        CoronaLog.cured,
+        CoronaLog.tests,
+        CoronaLog.deaths,
+        CoronaLog.median,
+        CoronaLog.hospitalized,
+        CoronaLog.confirmed_hospitalized,
+        CoronaLog.confirmed_hospitalized_icu,
+        CoronaLog.confirmed_hospitalized_ventilation,
+    ).order_by(CoronaLog.date.desc()).limit(1)[0]
+
 
 def get_infected_log() -> typing.Iterable[dict]:
     return CoronaLog.select(

@@ -17,8 +17,14 @@ from coronastats import db, cache
 logger = current_app.logger.getChild("scrapper")
 
 
-def _normalize_number(number):
-    return int(re.sub("[^0-9]+", "", number))
+def _normalize_number(number, default=0):
+    if not number:
+        return default
+    try:
+        return int(re.sub("[^0-9]+", "", number))
+    except ValueError:
+        pass
+    return default
 
 
 def _find_comment(text, comment):
@@ -57,14 +63,16 @@ def get_korona_gov_data(
             date_text, "Aktualizované %d. %m. %Y"
         ).date() - timedelta(days=1))
         
+        last_log = db.get_last_log()
+
         if last_date is None or updated_at > last_date:
-            infected = _normalize_number(get_element_with_comment(c, "REPLACE:koronastats-positives").text)
-            tested = _normalize_number(get_element_with_comment(c, "REPLACE:koronastats-lab-tests").text)
-            cured = _normalize_number(get_element_with_comment(c, "REPLACE:koronastats-cured").text)
-            deaths = _normalize_number(get_element_with_comment(c, "REPLACE:koronastats-deceased").text)
-            median = _normalize_number(get_element_with_comment(c, "REPLACE:koronastats-median").text)
-            hospitalized = _normalize_number(get_element_with_comment(c, "REPLACE:koronastats-hospitalized").text)
-            confirmed_hospitalized = _normalize_number(get_element_with_comment(c, "REPLACE:koronastats-hospitalized-covid19").text)
+            infected = _normalize_number(get_element_with_comment(c, "REPLACE:koronastats-positives").text, last_log.infected)
+            tested = _normalize_number(get_element_with_comment(c, "REPLACE:koronastats-lab-tests").text, last_log.tests)
+            cured = _normalize_number(get_element_with_comment(c, "REPLACE:koronastats-cured").text, last_log.cured)
+            deaths = _normalize_number(get_element_with_comment(c, "REPLACE:koronastats-deceased").text, last_log.deaths)
+            median = _normalize_number(get_element_with_comment(c, "REPLACE:koronastats-median").text, last_log.median)
+            hospitalized = _normalize_number(get_element_with_comment(c, "REPLACE:koronastats-hospitalized").text, last_log.hospitalized)
+            confirmed_hospitalized = _normalize_number(get_element_with_comment(c, "REPLACE:koronastats-hospitalized-covid19").text, last_log.confirmed_hospitalized)
             confirmed_hospitalized_text = get_element_with_comment(c, "REPLACE:koronastats-hospitalized-covid19-intensive").text
             confirmed_hospitalized_text_match = re.match(
                 (
@@ -74,14 +82,12 @@ def get_korona_gov_data(
                 confirmed_hospitalized_text,
             )
             confirmed_hospitalized_icu = _normalize_number(
-                confirmed_hospitalized_text_match.group(1)
-                if confirmed_hospitalized_text_match
-                else 0
+                confirmed_hospitalized_text_match.group(1),
+                last_log.confirmed_hospitalized_icu
             )
             confirmed_hospitalized_ventilation = _normalize_number(
-                confirmed_hospitalized_text_match.group(2)
-                if confirmed_hospitalized_text_match
-                else 0
+                confirmed_hospitalized_text_match.group(2),
+                last_log.confirmed_hospitalized_ventilation
             )
             db.add_corona_log(
                 infected=infected,
