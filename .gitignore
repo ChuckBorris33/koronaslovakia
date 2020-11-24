@@ -1,3 +1,6 @@
 /.vscode/
 /app.db
 .idea
+
+//svelte
+stats.html
