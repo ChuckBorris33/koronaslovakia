@@ -221,6 +221,29 @@ export function getTestedPerDayChartRows(
   return [["Dátum", "Pozitívne", "Negatívne"], ...data];
 }
 
+export function getTestedPerDayPercentChartRows(
+  logs: InfectedIncreaseLog[],
+  timespan: number
+) {
+  const data = logs
+    .filter((item) => {
+      if (timespan < 0) {
+        return true;
+      }
+      const date = new Date(item.date);
+      const from = subDays(new Date(), timespan);
+      return date > from;
+    })
+    .map((item) => {
+      const date = new Date(item.date);
+      return [
+        format(date, "yyyy-MM-dd"),
+        item.infected_increase / item.tests_increase,
+      ];
+    });
+  return [["Dátum", "Percento pozitívnych"], ...data];
+}
+
 export function getCurrentSort(
   columns: Record<string, TableColumn>
 ): SortValue {
