@@ -8,6 +8,7 @@
   import LineChart from "./LineChart.svelte";
   import TestedPerDayChart from "./TestedPerDayChart.svelte";
   import InfectedByLocationTable from "./InfectedByLocationTable.svelte";
+  import { SectionHeader } from "@beyonk/svelte-scrollspy";
 
   const charts: {
     id: string;
@@ -40,24 +41,24 @@
   ];
 </script>
 
-<div class="row">
-  <div class="col com-md-3 d-none d-md-block">
-    <ul class="nav flex-column" id="main-navigation">
-      {#each charts as chart, index}
+<div class="columns">
+  <div class="hide-md column col-3">
+    <ul class="nav" id="main-navigation">
+      {#each charts as chart}
         <li class="nav-item">
-          <a class="nav-link" class:active={index === 0} href={`#${chart.id}`}>
-            {chart.title}
-          </a>
+          <SectionHeader id={chart.id}>
+            <a class="text-primary" href={`#${chart.id}`}> {chart.title} </a>
+          </SectionHeader>
         </li>
       {/each}
     </ul>
   </div>
-  <div class="col col-md-9 col-sm-12">
+  <div class="column col-9 col-md-12">
     <Summary {...charts[0]} />
     <LineChart {...charts[1]} chartDataGetter={getInfectedChartRows} />
     <LineChart {...charts[2]} chartDataGetter={getOutcomeChartRows} />
     <LineChart {...charts[3]} chartDataGetter={getTestedChartRows} />
     <TestedPerDayChart {...charts[4]} />
-    <InfectedByLocationTable />
+    <InfectedByLocationTable {...charts[5]} />
   </div>
 </div>

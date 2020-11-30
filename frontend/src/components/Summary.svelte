@@ -12,7 +12,8 @@
   import { infectedLog } from "../store";
   import { InfectedLogDataKey } from "../types";
 
-  import type { SummaryValue, InfectedLog } from "../types";
+  import type { SummaryValue } from "../types";
+  import { ScrollableSection } from "@beyonk/svelte-scrollspy";
   import type { ChartConfiguration, PrimitiveArray } from "c3";
 
   export let id: string = "";
@@ -103,87 +104,77 @@
   }
 </script>
 
-<style lang="scss">
-  .summary {
-    margin-bottom: 4em;
-    min-height: 250px;
-  }
-</style>
-
 <div {id} class="summary">
-  <div class="row align-content-stretch">
-    <div class="col col-md-4 col-sm-12 mb-3">
-      <div class="card h-100 text-center">
-        <div class="card-header">
-          <div class="card-title m-0">{medianCard.title}</div>
-        </div>
-        <div class="card-body">
-          <div class="d-flex align-items-center justify-content-center h-100">
-            <div>
+  <ScrollableSection {id}>
+    <div class="columns">
+      <div class="column col-4 col-md-12 my-2">
+        <div class="card h-100 text-center">
+          <div class="card-header">
+            <div class="card-title h6">{medianCard.title}</div>
+          </div>
+          <div class="card-body">
+            <div class="card-content h-100">
               <h1 class="median d-inline">{medianCard.value}</h1>
               <small class="text-muted">{medianCard.delta}</small>
             </div>
           </div>
         </div>
       </div>
-    </div>
-    <div class="col col-md-8 col-sm-12 mb-3">
-      <div class="card h-100 text-center">
-        <div class="card-header">
-          <div class="card-title m-0">Vývoj kĺzavého mediánu</div>
-        </div>
-        <div class="card-body">
-          <div id="medianGraph" />
+      <div class="column col-8 col-md-12 my-2">
+        <div class="card h-100 text-center">
+          <div class="card-header">
+            <div class="card-title h6">Vývoj kĺzavého mediánu</div>
+          </div>
+          <div class="card-body">
+            <div id="medianGraph" />
+          </div>
         </div>
       </div>
     </div>
-  </div>
-  <div class="row align-content-stretch">
-    {#each simpleCards as card}
-      <div class="col col-md-4 col-sm-12 mb-3">
-        <div class="card h-100 text-center">
-          <div class="card-header">
-            <div class="card-title m-0">{card.title}</div>
-          </div>
-          <div class="card-body">
-            <div
-              class="py-4 d-flex align-items-center justify-content-center h-100">
-              <div>
-                <h3 class="d-inline">{card.value}</h3>
-                <small class="text-muted">{card.delta}</small>
+    <div class="columns">
+      {#each simpleCards as card}
+        <div class="column col-4 col-md-12 my-2">
+          <div class="card h-100 text-center">
+            <div class="card-header">
+              <div class="card-title h6">{card.title}</div>
+            </div>
+            <div class="card-body">
+              <div class="card-content h-100">
+                <div>
+                  <h3 class="d-inline">{card.value}</h3>
+                  <small class="text-muted">{card.delta}</small>
+                </div>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    {/each}
-    <div class="col col-md-4 col-sm-12 mb-3">
-      <div class="card h-100 text-center">
-        <div class="card-header">
-          <div class="card-title m-0">{hospitalizedCard.main.title}</div>
-        </div>
-        <div class="card-body">
-          <div
-            class="d-flex flex-column align-items-center justify-content-center
-            h-100">
-            <div class="pb-2">
-              <h4 class="d-inline">{hospitalizedCard.main.value}</h4>
-              <small class="text-muted">{hospitalizedCard.main.delta}</small>
+      {/each}
+      <div class="column col-4 col-md-12 my-2">
+        <div class="card h-100 text-center">
+          <div class="card-header">
+            <div class="card-title h6">{hospitalizedCard.main.title}</div>
+          </div>
+          <div class="card-body">
+            <div class="card-content flex-column h-100">
+              <div class="pb-2">
+                <h4 class="d-inline">{hospitalizedCard.main.value}</h4>
+                <small class="text-muted">{hospitalizedCard.main.delta}</small>
+              </div>
+              <table class="text-left">
+                {#each hospitalizedCard.subValues as value}
+                  <tr>
+                    <td class="pr-1">{value.title}</td>
+                    <td>
+                      {value.value}
+                      <small class="text-muted">{value.delta}</small>
+                    </td>
+                  </tr>
+                {/each}
+              </table>
             </div>
-            <table class="text-left">
-              {#each hospitalizedCard.subValues as value}
-                <tr>
-                  <td class="pr-1">{value.title}</td>
-                  <td>
-                    {value.value}
-                    <small class="text-muted">{value.delta}</small>
-                  </td>
-                </tr>
-              {/each}
-            </table>
           </div>
         </div>
       </div>
     </div>
-  </div>
+  </ScrollableSection>
 </div>
