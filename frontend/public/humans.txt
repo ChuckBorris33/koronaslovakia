@@ -1,0 +1,10 @@
+/* TEAM */
+  Title: Boris Žalman
+  Site: https://github.com/ChuckBorris33
+  Location: boris.zalman33@gmail.com
+
+/* SITE */
+  Standard: CSS3, HTML5
+  Components: Flask, Peewee, Nginx, Svelte, C3.js
+
+
