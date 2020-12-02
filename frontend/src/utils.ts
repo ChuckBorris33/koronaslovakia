@@ -238,7 +238,8 @@ export function getTestedPerDayPercentChartRows(
       const date = new Date(item.date);
       return [
         format(date, "yyyy-MM-dd"),
-        item.infected_increase / item.tests_increase,
+        item.tests_increase != 0 ?
+            item.infected_increase / item.tests_increase : 0,
       ];
     });
   return [["Dátum", "Percento pozitívnych"], ...data];

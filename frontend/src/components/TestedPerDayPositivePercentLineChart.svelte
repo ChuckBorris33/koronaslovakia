@@ -24,14 +24,14 @@
   ): string {
       (rows[index + 1][1] as number) + (rows[index + 1][2] as number);
     const percentage = Math.round(value * 10000) / 100;
-    return `${percentage}%)`;
+    return `${percentage}%`;
   }
 
   function labelsFormatter(value: number): string {
     if (timespan === -1) {
       return "";
     }
-    return formatNumber(value);
+    return formatNumber(Math.round(value * 10000) / 100);
   }
 
   function getTPDLineChartConfig(timespan: number): ChartConfiguration {
@@ -47,6 +47,11 @@
       tooltip: {
         format: {
           value: tooltipValue,
+        },
+      },
+      y: {
+        tick: {
+          format: (value) => { return (Math.round(value * 10000) / 100).toString() }
         },
       },
     });
