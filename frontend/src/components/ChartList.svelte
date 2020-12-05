@@ -7,6 +7,7 @@
   import Summary from "./Summary.svelte";
   import LineChart from "./LineChart.svelte";
   import TestedPerDayChart from "./TestedPerDayChart.svelte";
+  import TestedPerDayPositivePercentLineChart from "./TestedPerDayPositivePercentLineChart.svelte";
   import InfectedByLocationTable from "./InfectedByLocationTable.svelte";
   import { SectionHeader } from "@beyonk/svelte-scrollspy";
 
@@ -35,6 +36,10 @@
       title: "Výsledky testov za deň",
     },
     {
+      id: "infected-percent-increase-chart",
+      title: "Počty pozitívnych k testovaným"
+    },
+    {
       id: "by-location-table",
       title: "Prehľad podľa okresov",
     },
@@ -59,6 +64,7 @@
     <LineChart {...charts[2]} chartDataGetter={getOutcomeChartRows} />
     <LineChart {...charts[3]} chartDataGetter={getTestedChartRows} />
     <TestedPerDayChart {...charts[4]} />
-    <InfectedByLocationTable {...charts[5]} />
+    <TestedPerDayPositivePercentLineChart {...charts[5]} />
+    <InfectedByLocationTable {...charts[6]} />
   </div>
 </div>
