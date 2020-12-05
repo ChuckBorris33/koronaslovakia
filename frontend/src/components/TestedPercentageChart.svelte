@@ -2,7 +2,6 @@
   import c3, { ChartConfiguration, ChartAPI, PrimitiveArray } from "c3";
 
   import {
-    formatNumber,
     getChartConfig,
     getTestedPerDayPercentChartRows,
   } from "../utils";
@@ -28,10 +27,10 @@
   }
 
   function labelsFormatter(value: number): string {
-    if (timespan === -1) {
+    if (timespan != 14) {
       return "";
     }
-    return formatNumber(Math.round(value * 10000) / 100);
+    return `${Math.round(value * 10000) / 100}%`;
   }
 
   function getTPDLineChartConfig(timespan: number): ChartConfiguration {
@@ -49,11 +48,13 @@
           value: tooltipValue,
         },
       },
-      y: {
+      axis: {
+        y: {
         tick: {
-          format: (value) => { return (Math.round(value * 10000) / 100).toString() }
+          format: labelsFormatter
         },
       },
+      }
     });
   }
 
@@ -72,5 +73,5 @@
 </script>
 
 <ChartLayout {id} {title} bind:timespan>
-  <div id={`${id}_graph`} />
+  <div id={`${id}_graph`} class:hideGraphPoints={timespan == -1}/>
 </ChartLayout>
