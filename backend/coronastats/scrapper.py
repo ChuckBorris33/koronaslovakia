@@ -9,7 +9,7 @@ import coronastats
 import requests
 import schedule
 
-from bs4 import BeautifulSoup, Comment
+from bs4 import BeautifulSoup, Comment, PageElement
 from flask import current_app
 
 from coronastats import db, cache
@@ -17,7 +17,7 @@ from coronastats import db, cache
 logger = current_app.logger.getChild("scrapper")
 
 
-def _normalize_number(number, default=0):
+def _normalize_number(number: str, default: int = 0) -> int:
     if not number:
         return default
     try:
@@ -27,17 +27,13 @@ def _normalize_number(number, default=0):
     return default
 
 
-def _find_comment(text, comment):
+def _find_comment(text: Comment, comment: str) -> PageElement:
     clean_text = str(text).strip()
     return isinstance(text, Comment) and clean_text == comment
 
-def get_element_with_comment(container, comment):
-    return container.find(text=lambda t:_find_comment(t, comment)).find_parent()
 
-"""
-' REPLACE:koronastats-hospitalized-covid19 ', 
-' REPLACE:koronastats-hospitalized-covid19-intensive ', ' REPLACE:koronastats-hospitalized-covid19-ventilation ', 
-' REPLACE:koronastats-median ', """
+def get_element_with_comment(container: PageElement, comment: str) -> PageElement:
+    return container.find(text=lambda t: _find_comment(t, comment)).find_parent()
 
 
 def get_korona_gov_data(
@@ -54,26 +50,49 @@ def get_korona_gov_data(
                 + "https://korona.gov.sk/koronavirus-na-slovensku-v-cislach/"
             )
         wrapper = BeautifulSoup(result.text, "html.parser")
-        c = (
-            wrapper.find("main")
-            .findAll("div", {"class": "govuk-width-container"})[1]
-        )
+        c = wrapper.find("main").findAll("div", {"class": "govuk-width-container"})[1]
         date_text = get_element_with_comment(c, "REPLACE:koronastats-last-update").text
-        updated_at = overwrite_updated_at or (datetime.strptime(
-            date_text, "Aktualizované %d. %m. %Y"
-        ).date() - timedelta(days=1))
-        
+        updated_at = overwrite_updated_at or (
+            datetime.strptime(date_text, "Aktualizované %d. %m. %Y").date()
+            - timedelta(days=1)
+        )
+
         last_log = db.get_last_log()
 
         if last_date is None or updated_at > last_date:
-            infected = _normalize_number(get_element_with_comment(c, "REPLACE:koronastats-positives").text, last_log.infected)
-            tested = _normalize_number(get_element_with_comment(c, "REPLACE:koronastats-lab-tests").text, last_log.tests)
-            cured = _normalize_number(get_element_with_comment(c, "REPLACE:koronastats-cured").text, last_log.cured)
-            deaths = _normalize_number(get_element_with_comment(c, "REPLACE:koronastats-deceased").text, last_log.deaths)
-            median = _normalize_number(get_element_with_comment(c, "REPLACE:koronastats-median").text, last_log.median)
-            hospitalized = _normalize_number(get_element_with_comment(c, "REPLACE:koronastats-hospitalized").text, last_log.hospitalized)
-            confirmed_hospitalized = _normalize_number(get_element_with_comment(c, "REPLACE:koronastats-hospitalized-covid19").text, last_log.confirmed_hospitalized)
-            confirmed_hospitalized_text = get_element_with_comment(c, "REPLACE:koronastats-hospitalized-covid19-intensive").text
+            infected = _normalize_number(
+                get_element_with_comment(c, "REPLACE:koronastats-positives").text,
+                last_log.infected,
+            )
+            tested = _normalize_number(
+                get_element_with_comment(c, "REPLACE:koronastats-lab-tests").text,
+                last_log.tests,
+            )
+            cured = _normalize_number(
+                get_element_with_comment(c, "REPLACE:koronastats-cured").text,
+                last_log.cured,
+            )
+            deaths = _normalize_number(
+                get_element_with_comment(c, "REPLACE:koronastats-deceased").text,
+                last_log.deaths,
+            )
+            median = _normalize_number(
+                get_element_with_comment(c, "REPLACE:koronastats-median").text,
+                last_log.median,
+            )
+            hospitalized = _normalize_number(
+                get_element_with_comment(c, "REPLACE:koronastats-hospitalized").text,
+                last_log.hospitalized,
+            )
+            confirmed_hospitalized = _normalize_number(
+                get_element_with_comment(
+                    c, "REPLACE:koronastats-hospitalized-covid19"
+                ).text,
+                last_log.confirmed_hospitalized,
+            )
+            confirmed_hospitalized_text = get_element_with_comment(
+                c, "REPLACE:koronastats-hospitalized-covid19-intensive"
+            ).text
             confirmed_hospitalized_text_match = re.match(
                 (
                     r"Počet hospitalizovanýchs potvrdeným covid19z toho na "
@@ -82,12 +101,16 @@ def get_korona_gov_data(
                 confirmed_hospitalized_text,
             )
             confirmed_hospitalized_icu = _normalize_number(
-                confirmed_hospitalized_text_match.group(1),
-                last_log.confirmed_hospitalized_icu
+                confirmed_hospitalized_text_match.group(1)
+                if confirmed_hospitalized_text_match
+                else 0,
+                last_log.confirmed_hospitalized_icu,
             )
             confirmed_hospitalized_ventilation = _normalize_number(
-                confirmed_hospitalized_text_match.group(2),
-                last_log.confirmed_hospitalized_ventilation
+                confirmed_hospitalized_text_match.group(2)
+                if confirmed_hospitalized_text_match
+                else 0,
+                last_log.confirmed_hospitalized_ventilation,
             )
             db.add_corona_log(
                 infected=infected,
@@ -142,7 +165,7 @@ def get_corona_counts(last_date: typing.Optional[date] = None):
                 logger.info(f"Scrapped {infected}, {tested}, Cancelling job for today")
                 return schedule.CancelJob
         else:
-            logger.info(f"Stats not updated")
+            logger.info("Stats not updated")
     except Exception:
         logger.exception("Error while scrapping data")
         return schedule.CancelJob

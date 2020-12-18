@@ -46,7 +46,7 @@ cache = Cache()
 db_wrapper = FlaskDB()
 
 
-def create_app():
+def create_app() -> Flask:
     app = Flask("coronastats", instance_relative_config=False)
     CORS(app, resources={r"*": {"origins": "*"}})
     config_path = os.getenv("CORONASTATS_CONFIG", "coronastats.config.ProductionConfig")

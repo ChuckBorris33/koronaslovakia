@@ -49,7 +49,7 @@ def release(c):
                 f'echo "export CORONASTATS_SECRET_KEY={secret_key}" >> .venv/bin/activate'
             )
             server.run(
-                f'echo "export FLASK_APP=coronastats:create_app" >> .venv/bin/activate'
+                'echo "export FLASK_APP=coronastats:create_app" >> .venv/bin/activate'
             )
             with server.prefix("source .venv/bin/activate"):
                 server.run(f"pip3 install {wheel_name}")

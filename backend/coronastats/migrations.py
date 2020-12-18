@@ -164,7 +164,7 @@ def run_migrations(goal_version):
                 click.echo("No migrations to apply")
         except Exception:
             transaction.rollback()
-            click.secho(f"Error migrating. Rolling back.", fg="red")
+            click.secho("Error migrating. Rolling back.", fg="red")
             raise
 
 

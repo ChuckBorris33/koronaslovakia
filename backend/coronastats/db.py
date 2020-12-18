@@ -85,18 +85,23 @@ def get_log_by_date(log_date):
 def get_last_log_date() -> datetime.date:
     return CoronaLog.select(CoronaLog.date).order_by(CoronaLog.date.desc()).get().date
 
-def get_last_log() -> dict:
-    return CoronaLog.select(
-        CoronaLog.infected,
-        CoronaLog.cured,
-        CoronaLog.tests,
-        CoronaLog.deaths,
-        CoronaLog.median,
-        CoronaLog.hospitalized,
-        CoronaLog.confirmed_hospitalized,
-        CoronaLog.confirmed_hospitalized_icu,
-        CoronaLog.confirmed_hospitalized_ventilation,
-    ).order_by(CoronaLog.date.desc()).limit(1)[0]
+
+def get_last_log() -> CoronaLog:
+    return (
+        CoronaLog.select(
+            CoronaLog.infected,
+            CoronaLog.cured,
+            CoronaLog.tests,
+            CoronaLog.deaths,
+            CoronaLog.median,
+            CoronaLog.hospitalized,
+            CoronaLog.confirmed_hospitalized,
+            CoronaLog.confirmed_hospitalized_icu,
+            CoronaLog.confirmed_hospitalized_ventilation,
+        )
+        .order_by(CoronaLog.date.desc())
+        .limit(1)[0]
+    )
 
 
 def get_infected_log() -> typing.Iterable[dict]:
@@ -156,7 +161,9 @@ def get_infected_increase_log() -> typing.Iterable[dict]:
         .join(
             previous_query,
             JOIN.LEFT_OUTER,
-            on=(previous_query.c.id == CoronaLog.id - 1),
+            on=(
+                fn.julianday(previous_query.c.date) == fn.julianday(CoronaLog.date) - 1
+            ),
         )
         .dicts()
     )
