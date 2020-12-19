@@ -55,6 +55,7 @@ def release(c):
                 server.run(f"pip3 install {wheel_name}")
             server.run(f"rm {wheel_name}")
         server.run("rm -rf frontend/*")
+        server.run("ln app.db frontend/database.sqlite")
     rsync(server, "../frontend/public/*", os.path.join(remote_dir, "frontend"))
     server.put(
         "serverconfig/supervisor.conf",
