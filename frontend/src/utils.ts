@@ -56,7 +56,7 @@ export function getChartConfig(config: ChartConfiguration): ChartConfiguration {
       },
     },
     color: {
-      pattern: ["#2D7DD2", "#EA7317", "#97CC04", "#F45D01"],
+      pattern: ["#2D7DD2", "#EA7317", "#5f8103", "#F45D01"],
     },
   };
   return _.merge(basicConfig, config);
@@ -214,11 +214,13 @@ export function getTestedPerDayChartRows(
       const date = new Date(item.date);
       return [
         format(date, "yyyy-MM-dd"),
+        item.tests_increase != 0 ?
+            item.infected_increase / item.tests_increase : 0,
         item.infected_increase,
         item.tests_increase - item.infected_increase,
       ];
     });
-  return [["Dátum", "Pozitívne", "Negatívne"], ...data];
+  return [["Dátum", "Percento pozitívnych", "Pozitívne", "Negatívne"], ...data];
 }
 
 export function getTestedPerDayPercentChartRows(

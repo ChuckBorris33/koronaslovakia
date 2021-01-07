@@ -22,13 +22,24 @@
     id: string,
     index: number
   ): string {
-    const testsTotal =
-      (rows[index + 1][1] as number) + (rows[index + 1][2] as number);
-    const percentage = Math.round((value / testsTotal) * 10000) / 100;
-    return `${value} (${percentage}%)`;
+    if(id == "Percento pozitívnych") {
+      const percentage = Math.round(value * 10000) / 100;
+      return `${percentage}%`;
+    }
+    return String(value);
   }
 
-  function labelsFormatter(value: number): string {
+  function formatPercent(value: number): string {
+    return `${Math.round(value * 10000) / 100}%`;
+  }
+
+  function labelsFormatter(value: number, id: string): string {
+    if (id == "Percento pozitívnych") {
+      if (timespan != 14) {
+        return "";
+      }
+      return formatPercent(value)
+    }
     if (timespan === -1) {
       return "";
     }
@@ -43,9 +54,22 @@
       bindto: `#${id}_graph`,
       data: {
         type: "bar",
+        types: {
+          "Percento pozitívnych": "line",
+        },
+        axes: {
+          "Percento pozitívnych": "y2",
+          "Pozitívne": "y",
+          "Negatívne": "y",
+        },
+        colors: {
+          "Percento pozitívnych": "#5f8103",
+          "Pozitívne": "#2D7DD2",
+          "Negatívne": "#EA7317",
+        },
         rows,
         labels: { format: labelsFormatter },
-        groups: [["Pozitívne", "Negatívne"]],
+        groups: [["Pozitívne", "Negatívne"], ["Percento pozitívnych"]],
       },
       tooltip: {
         format: {
@@ -59,6 +83,16 @@
             bottom: 0,
           },
         },
+        y2: {
+          show: true,
+          min: 0,
+          padding: {
+            bottom: 0,
+          },
+          tick: {
+            format: formatPercent
+          },
+        }
       },
     });
   }
@@ -78,5 +112,5 @@
 </script>
 
 <ChartLayout {id} {title} bind:timespan>
-  <div id={`${id}_graph`} />
+  <div id={`${id}_graph`} class:hideGraphPoints={timespan == -1} />
 </ChartLayout>

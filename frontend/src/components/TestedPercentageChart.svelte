@@ -21,7 +21,6 @@
     id: string,
     index: number
   ): string {
-      (rows[index + 1][1] as number) + (rows[index + 1][2] as number);
     const percentage = Math.round(value * 10000) / 100;
     return `${percentage}%`;
   }
