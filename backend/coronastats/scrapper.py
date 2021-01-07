@@ -90,6 +90,18 @@ def get_korona_gov_data(
                 ).text,
                 last_log.confirmed_hospitalized,
             )
+            ag_tests = _normalize_number(
+                get_element_with_comment(
+                    c, "REPLACE:koronastats-ag-tests"
+                ).text,
+                last_log.ag_tests,
+            )
+            ag_positive = _normalize_number(
+                get_element_with_comment(
+                    c, "REPLACE:koronastats-ag-positives"
+                ).text,
+                last_log.ag_positive,
+            )
             confirmed_hospitalized_text = get_element_with_comment(
                 c, "REPLACE:koronastats-hospitalized-covid19-intensive"
             ).text
@@ -112,6 +124,11 @@ def get_korona_gov_data(
                 else 0,
                 last_log.confirmed_hospitalized_ventilation,
             )
+            text = wrapper.findAll('strong', text = re.compile('Počet zaočkovaných osôb'))[0]
+            try:
+                vaccinated = _normalize_number(text.find_parent().find_parent().h3.text)
+            except:
+                vaccinated = 0
             db.add_corona_log(
                 infected=infected,
                 cured=cured,
@@ -123,6 +140,9 @@ def get_korona_gov_data(
                 confirmed_hospitalized=confirmed_hospitalized,
                 confirmed_hospitalized_icu=confirmed_hospitalized_icu,
                 confirmed_hospitalized_ventilation=confirmed_hospitalized_ventilation,
+                vaccinated=vaccinated,
+                ag_tests=ag_tests,
+                ag_positive=ag_positive,
             )
             cache.clear()
             if last_date is not None and updated_at > last_date:

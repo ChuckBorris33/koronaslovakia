@@ -123,11 +123,38 @@ def add_additional_corona_log_fields(database):
     return front, back
 
 
+def add_ag_and_vaccinated_corona_log_fields(database):
+    migrator = SqliteMigrator(database)
+
+    def front():
+        vaccinated = IntegerField(default=0)
+        ag_tests = IntegerField(default=0)
+        ag_positive = IntegerField(default=0)
+
+        migrate(
+            migrator.add_column("coronalog", "vaccinated", vaccinated),
+            migrator.add_column("coronalog", "ag_tests", ag_tests),
+            migrator.add_column(
+                "coronalog", "ag_positive", ag_positive
+            ),
+        )
+
+    def back():
+        migrate(
+            migrator.drop_column("coronalog", "vaccinated"),
+            migrator.drop_column("coronalog", "ag_tests"),
+            migrator.drop_column("coronalog", "ag_positive"),
+        )
+
+    return front, back
+
+
 migrations = [
     init_database,
     add_location_tables,
     rename_corona_log_datetime,
     add_additional_corona_log_fields,
+    add_ag_and_vaccinated_corona_log_fields,
 ]
 
 

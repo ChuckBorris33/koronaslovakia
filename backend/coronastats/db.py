@@ -27,6 +27,9 @@ class CoronaLog(db_wrapper.Model):  # type: ignore
     confirmed_hospitalized = IntegerField(default=0)
     confirmed_hospitalized_icu = IntegerField(default=0)
     confirmed_hospitalized_ventilation = IntegerField(default=0)
+    vaccinated = IntegerField(default=0)
+    ag_tests = IntegerField(default=0)
+    ag_positive = IntegerField(default=0)
 
 
 class CoronaLocation(db_wrapper.Model):  # type: ignore
@@ -57,6 +60,9 @@ def add_corona_log(
     confirmed_hospitalized: int = 0,
     confirmed_hospitalized_icu: int = 0,
     confirmed_hospitalized_ventilation: int = 0,
+    vaccinated: int = 0,
+    ag_tests: int = 0,
+    ag_positive: int = 0,
 ) -> int:
     if not log_date:
         log_date = datetime.date.today()
@@ -70,6 +76,9 @@ def add_corona_log(
         confirmed_hospitalized=confirmed_hospitalized,
         confirmed_hospitalized_icu=confirmed_hospitalized_icu,
         confirmed_hospitalized_ventilation=confirmed_hospitalized_ventilation,
+        vaccinated=vaccinated,
+        ag_tests=ag_tests,
+        ag_positive=ag_positive,
     )
     log, created = CoronaLog.get_or_create(date=log_date, defaults=values)
     if not created:
@@ -98,6 +107,9 @@ def get_last_log() -> CoronaLog:
             CoronaLog.confirmed_hospitalized,
             CoronaLog.confirmed_hospitalized_icu,
             CoronaLog.confirmed_hospitalized_ventilation,
+            CoronaLog.vaccinated,
+            CoronaLog.ag_tests,
+            CoronaLog.ag_positive,
         )
         .order_by(CoronaLog.date.desc())
         .limit(1)[0]
@@ -116,6 +128,9 @@ def get_infected_log() -> typing.Iterable[dict]:
         CoronaLog.confirmed_hospitalized,
         CoronaLog.confirmed_hospitalized_icu,
         CoronaLog.confirmed_hospitalized_ventilation,
+        CoronaLog.vaccinated,
+        CoronaLog.ag_tests,
+        CoronaLog.ag_positive,
     ).dicts()
 
 

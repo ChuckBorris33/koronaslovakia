@@ -8,6 +8,9 @@ export enum InfectedLogDataKey {
   CONFIRMED_HOSPITALIZED = "confirmed_hospitalized",
   CONFIRMED_HOSPITALIZED_ICU = "confirmed_hospitalized_icu",
   CONFIRMED_HOSPITALIZED_VENTILATION = "confirmed_hospitalized_ventilation",
+  VACCINATED = "vaccinated",
+  AG_TESTS = "ag_tests",
+  AG_POSITIVE = "ag_positive",
 }
 
 export enum InfectedIncreaseLogDataKey {
@@ -26,6 +29,9 @@ export type InfectedLog = {
   [InfectedLogDataKey.CONFIRMED_HOSPITALIZED]: number;
   [InfectedLogDataKey.CONFIRMED_HOSPITALIZED_ICU]: number;
   [InfectedLogDataKey.CONFIRMED_HOSPITALIZED_VENTILATION]: number;
+  [InfectedLogDataKey.VACCINATED]: number;
+  [InfectedLogDataKey.AG_TESTS]: number;
+  [InfectedLogDataKey.AG_POSITIVE]: number;
 };
 
 export type InfectedIncreaseLog = {
