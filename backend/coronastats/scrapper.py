@@ -124,9 +124,9 @@ def get_korona_gov_data(
                 else 0,
                 last_log.confirmed_hospitalized_ventilation,
             )
-            text = wrapper.findAll('strong', text = re.compile('Počet zaočkovaných osôb'))[0]
             try:
-                vaccinated = _normalize_number(text.find_parent().find_parent().h3.text)
+                vacinated_label = wrapper.find('strong', text = re.compile('Počet zaočkovaných'))
+                vaccinated = _normalize_number(vacinated_label.find_parent().find_parent().h3.text)
             except:
                 vaccinated = 0
             db.add_corona_log(
