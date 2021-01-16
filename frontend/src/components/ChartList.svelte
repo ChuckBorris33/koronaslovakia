@@ -28,16 +28,8 @@
       title: "Výsledky ochorenia",
     },
     {
-      id: "tested-count",
-      title: "Počet testov",
-    },
-    {
       id: "infected-increase-chart",
       title: "Výsledky testov za deň",
-    },
-    {
-      id: "infected-percent-increase-chart",
-      title: "Percento pozitívnych testov",
     },
     {
       id: "by-location-table",
