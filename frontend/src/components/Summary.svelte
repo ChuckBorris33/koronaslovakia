@@ -64,13 +64,13 @@
 
   $: if (lastLogs.length) {
     simpleCards = [
-      getSummaryValue(lastLogs, InfectedLogDataKey.INFECTED, "Nakazených"),
-      getSummaryValue(lastLogs, InfectedLogDataKey.TESTS, "Testovaných"),
+      getSummaryValue(lastLogs, InfectedLogDataKey.INFECTED, "PCR pozitívnych"),
+      getSummaryValue(lastLogs, InfectedLogDataKey.TESTS, "PCR testovaných"),
       getSummaryValue(lastLogs, InfectedLogDataKey.DEATHS, "Úmrtia"),
-      getSummaryValue(lastLogs, InfectedLogDataKey.VACCINATED, "Očkovaných"),
-      getSummaryValue(lastLogs, InfectedLogDataKey.AG_TESTS, "Ag testovaných"),
       getSummaryValue(lastLogs, InfectedLogDataKey.AG_POSITIVE, "Ag Pozitívnych"),
-      getSummaryValue(lastLogs, InfectedLogDataKey.CURED, "Vyliečení"),
+      getSummaryValue(lastLogs, InfectedLogDataKey.AG_TESTS, "Ag testovaných"),
+      getSummaryValue(lastLogs, InfectedLogDataKey.VACCINATED, "Očkovaných"),
+      getSummaryValue(lastLogs, InfectedLogDataKey.CURED, "Vyliečených"),
       getActiveSummaryValue(lastLogs),
     ];
     hospitalizedCard = {

@@ -126,9 +126,9 @@ def get_korona_gov_data(
             )
             try:
                 vacinated_label = wrapper.find('strong', text = re.compile('Počet zaočkovaných'))
-                vaccinated = _normalize_number(vacinated_label.find_parent().find_parent().h3.text)
+                vaccinated = _normalize_number(vacinated_label.find_parent().find_parent().h3.text, last_log.vaccinated)
             except:
-                vaccinated = 0
+                vaccinated = last_log.vaccinated
             db.add_corona_log(
                 infected=infected,
                 cured=cured,

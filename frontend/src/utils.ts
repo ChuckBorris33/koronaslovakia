@@ -177,11 +177,19 @@ export function getOutcomeChartRows(
   return [["Dátum", "Vyliečení", "Úmrtia"], ...data];
 }
 
-export function getTestedChartRows(
+export function getHospitalizedChartRows(
   logs: InfectedLog[],
   timespan: number
 ): PrimitiveArray[] {
-  const data = logs
+  const firstNonEmptyId = logs.findIndex((item) => {
+    return item[InfectedLogDataKey.HOSPITALIZED] 
+    || item[InfectedLogDataKey.CONFIRMED_HOSPITALIZED] 
+    || item[InfectedLogDataKey.CONFIRMED_HOSPITALIZED_ICU]
+    || item[InfectedLogDataKey.CONFIRMED_HOSPITALIZED_VENTILATION] 
+  })
+  console.log(firstNonEmptyId)
+  const nonEmptyLogs = logs.slice(firstNonEmptyId)
+  const data = nonEmptyLogs
     .filter((item) => {
       if (timespan < 0) {
         return true;
@@ -192,9 +200,46 @@ export function getTestedChartRows(
     })
     .map((item) => {
       const date = new Date(item.date);
-      return [format(date, "yyyy-MM-dd"), item[InfectedLogDataKey.TESTS]];
+      return [
+        format(date, "yyyy-MM-dd"), 
+        item[InfectedLogDataKey.HOSPITALIZED],
+        item[InfectedLogDataKey.CONFIRMED_HOSPITALIZED],
+        item[InfectedLogDataKey.CONFIRMED_HOSPITALIZED_ICU],
+        item[InfectedLogDataKey.CONFIRMED_HOSPITALIZED_VENTILATION],
+      ];
     });
-  return [["Dátum", "Počet testov"], ...data];
+  return [
+    [
+      "Dátum",
+      "Hospitalizovaných",
+      "Potvrdený covid19",
+      "Na JIS",
+      "Na ventilácií",
+    ],
+     ...data,
+  ];
+}
+
+export function getVaccinatedChartRows(
+  logs: InfectedLog[],
+  timespan: number
+): PrimitiveArray[] {
+  const firstNonEmptyId = logs.findIndex((item) => item[InfectedLogDataKey.VACCINATED])
+  const nonEmptyLogs = logs.slice(firstNonEmptyId)
+  const data = nonEmptyLogs
+    .filter((item) => {
+      if (timespan < 0) {
+        return true;
+      }
+      const date = new Date(item.date);
+      const from = subDays(new Date(), timespan);
+      return date > from;
+    })
+    .map((item) => {
+      const date = new Date(item.date);
+      return [format(date, "yyyy-MM-dd"), item[InfectedLogDataKey.VACCINATED]];
+    });
+  return [["Dátum", "Počet zaočkovaných"], ...data];
 }
 
 export function getTestedPerDayChartRows(
@@ -221,30 +266,6 @@ export function getTestedPerDayChartRows(
       ];
     });
   return [["Dátum", "Percento pozitívnych", "Pozitívne", "Negatívne"], ...data];
-}
-
-export function getTestedPerDayPercentChartRows(
-  logs: InfectedIncreaseLog[],
-  timespan: number
-) {
-  const data = logs
-    .filter((item) => {
-      if (timespan < 0) {
-        return true;
-      }
-      const date = new Date(item.date);
-      const from = subDays(new Date(), timespan);
-      return date > from;
-    })
-    .map((item) => {
-      const date = new Date(item.date);
-      return [
-        format(date, "yyyy-MM-dd"),
-        item.tests_increase != 0 ?
-            item.infected_increase / item.tests_increase : 0,
-      ];
-    });
-  return [["Dátum", "Percento pozitívnych"], ...data];
 }
 
 export function getCurrentSort(
