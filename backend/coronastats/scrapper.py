@@ -91,15 +91,11 @@ def get_korona_gov_data(
                 last_log.confirmed_hospitalized,
             )
             ag_tests = _normalize_number(
-                get_element_with_comment(
-                    c, "REPLACE:koronastats-ag-tests"
-                ).text,
+                get_element_with_comment(c, "REPLACE:koronastats-ag-tests").text,
                 last_log.ag_tests,
             )
             ag_positive = _normalize_number(
-                get_element_with_comment(
-                    c, "REPLACE:koronastats-ag-positives"
-                ).text,
+                get_element_with_comment(c, "REPLACE:koronastats-ag-positives").text,
                 last_log.ag_positive,
             )
             confirmed_hospitalized_text = get_element_with_comment(
@@ -124,11 +120,12 @@ def get_korona_gov_data(
                 else 0,
                 last_log.confirmed_hospitalized_ventilation,
             )
-            try:
-                vacinated_label = wrapper.find('strong', text = re.compile('Počet zaočkovaných'))
-                vaccinated = _normalize_number(vacinated_label.find_parent().find_parent().h3.text, last_log.vaccinated)
-            except:
-                vaccinated = last_log.vaccinated
+            vaccinated = _normalize_number(
+                get_element_with_comment(
+                    c, "REPLACE:koronastats-slovakia_vaccination_dose1_total"
+                ).text,
+                last_log.vaccinated,
+            )
             db.add_corona_log(
                 infected=infected,
                 cured=cured,
