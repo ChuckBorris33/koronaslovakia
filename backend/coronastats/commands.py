@@ -1,6 +1,10 @@
 import datetime
+import io
+import csv
+from collections import defaultdict
 
 import click
+import requests
 from coronastats import db, scrapper, cache
 from coronastats.scrapper import (
     get_corona_counts,
@@ -81,3 +85,42 @@ def show_migrations():
 @click.argument("version")
 def set_migration_state(version):
     return migrations.set_migration_state(version)
+
+
+@app.cli.command("load_vaccinated")
+def load_vaccinated():
+    result = requests.get(
+        "https://raw.githubusercontent.com/Institut-Zdravotnych-Analyz/covid19-data/"
+        + "main/Vaccination/OpenData_Slovakia_Vaccination_Regions.csv"
+    )
+    csv_stream = io.StringIO(result.text)
+    reader = csv.DictReader(csv_stream, delimiter=";")
+    date_data = defaultdict(dict)
+    last_row = None
+    for row in reversed(list(reader)):
+        date = datetime.datetime.strptime(row["Date"], "%Y-%m-%d").date()
+        if last_row and "vaccinated" not in date_data[date]:
+            date_data[date]["vaccinated"] = last_row["vaccinated"]
+            date_data[date]["vaccinated_2nd_dose"] = last_row["vaccinated_2nd_dose"]
+        date_data[date]["vaccinated"] = date_data[date].get("vaccinated", 0) + int(
+            row["first_dose"]
+        )
+        date_data[date]["vaccinated_2nd_dose"] = date_data[date].get(
+            "vaccinated_2nd_dose", 0
+        ) + int(row["second_dose"])
+        last_row = date_data[date]
+    logs = db.CoronaLog.select().where(db.CoronaLog.date.in_(list(date_data.keys())))
+    to_update = []
+    for log in logs.iterator():
+        new_vaccinated = date_data[log.date]["vaccinated"]
+        new_vaccinated_2nd_dose = date_data[log.date]["vaccinated_2nd_dose"]
+        if (
+            new_vaccinated != log.vaccinated
+            or new_vaccinated_2nd_dose != log.vaccinated_2nd_dose
+        ):
+            log.vaccinated = date_data[log.date]["vaccinated"]
+            log.vaccinated_2nd_dose = date_data[log.date]["vaccinated_2nd_dose"]
+            to_update.append(log)
+    db.CoronaLog.bulk_update(
+        to_update, fields=[db.CoronaLog.vaccinated, db.CoronaLog.vaccinated_2nd_dose]
+    )
