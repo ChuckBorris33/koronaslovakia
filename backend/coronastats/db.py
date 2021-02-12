@@ -28,6 +28,7 @@ class CoronaLog(db_wrapper.Model):  # type: ignore
     confirmed_hospitalized_icu = IntegerField(default=0)
     confirmed_hospitalized_ventilation = IntegerField(default=0)
     vaccinated = IntegerField(default=0)
+    vaccinated_2nd_dose = IntegerField(default=0)
     ag_tests = IntegerField(default=0)
     ag_positive = IntegerField(default=0)
 
@@ -61,6 +62,7 @@ def add_corona_log(
     confirmed_hospitalized_icu: int = 0,
     confirmed_hospitalized_ventilation: int = 0,
     vaccinated: int = 0,
+    vaccinated_2nd_dose: int = 0,
     ag_tests: int = 0,
     ag_positive: int = 0,
 ) -> int:
@@ -77,6 +79,7 @@ def add_corona_log(
         confirmed_hospitalized_icu=confirmed_hospitalized_icu,
         confirmed_hospitalized_ventilation=confirmed_hospitalized_ventilation,
         vaccinated=vaccinated,
+        vaccinated_2nd_dose=vaccinated_2nd_dose,
         ag_tests=ag_tests,
         ag_positive=ag_positive,
     )
@@ -108,6 +111,7 @@ def get_last_log() -> CoronaLog:
             CoronaLog.confirmed_hospitalized_icu,
             CoronaLog.confirmed_hospitalized_ventilation,
             CoronaLog.vaccinated,
+            CoronaLog.vaccinated_2nd_dose,
             CoronaLog.ag_tests,
             CoronaLog.ag_positive,
         )
@@ -129,6 +133,7 @@ def get_infected_log() -> typing.Iterable[dict]:
         CoronaLog.confirmed_hospitalized_icu,
         CoronaLog.confirmed_hospitalized_ventilation,
         CoronaLog.vaccinated,
+        CoronaLog.vaccinated_2nd_dose,
         CoronaLog.ag_tests,
         CoronaLog.ag_positive,
     ).dicts()

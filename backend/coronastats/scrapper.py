@@ -126,6 +126,12 @@ def get_korona_gov_data(
                 ).text,
                 last_log.vaccinated,
             )
+            vaccinated_2nd_dose = _normalize_number(
+                get_element_with_comment(
+                    c, "REPLACE:koronastats-slovakia_vaccination_dose2_total"
+                ).text,
+                last_log.vaccinated,
+            )
             db.add_corona_log(
                 infected=infected,
                 cured=cured,
@@ -138,6 +144,7 @@ def get_korona_gov_data(
                 confirmed_hospitalized_icu=confirmed_hospitalized_icu,
                 confirmed_hospitalized_ventilation=confirmed_hospitalized_ventilation,
                 vaccinated=vaccinated,
+                vaccinated_2nd_dose=vaccinated_2nd_dose,
                 ag_tests=ag_tests,
                 ag_positive=ag_positive,
             )
