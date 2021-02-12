@@ -187,7 +187,6 @@ export function getHospitalizedChartRows(
     || item[InfectedLogDataKey.CONFIRMED_HOSPITALIZED_ICU]
     || item[InfectedLogDataKey.CONFIRMED_HOSPITALIZED_VENTILATION] 
   })
-  console.log(firstNonEmptyId)
   const nonEmptyLogs = logs.slice(firstNonEmptyId)
   const data = nonEmptyLogs
     .filter((item) => {
@@ -237,9 +236,9 @@ export function getVaccinatedChartRows(
     })
     .map((item) => {
       const date = new Date(item.date);
-      return [format(date, "yyyy-MM-dd"), item[InfectedLogDataKey.VACCINATED]];
+      return [format(date, "yyyy-MM-dd"), item[InfectedLogDataKey.VACCINATED], item[InfectedLogDataKey.VACCINATED_2ND_DOSE]];
     });
-  return [["Dátum", "Počet zaočkovaných"], ...data];
+  return [["Dátum", "Počet zaočkovaných", "Počet zaočkovaných 2. dávkou"], ...data];
 }
 
 export function getTestedPerDayChartRows(

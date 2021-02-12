@@ -10,10 +10,11 @@
     getTooltipWithDeltaFormatter,
   } from "../utils";
   import { infectedLog } from "../store";
-  import { InfectedLogDataKey } from "../types";
+  import { InfectedLogDataKey, SubValueSummaryCard } from "../types";
 
   import type { SummaryValue } from "../types";
   import { ScrollableSection } from "@beyonk/svelte-scrollspy";
+  import SubValueCard from "./SubValueCard.svelte"
   import type { ChartConfiguration, PrimitiveArray } from "c3";
 
   export let id: string = "";
@@ -25,8 +26,12 @@
     delta: "",
   };
   let simpleCards: SummaryValue[] = [];
-  let hospitalizedCard: { main: SummaryValue; subValues: SummaryValue[] } = {
+  let hospitalizedCard: SubValueSummaryCard = {
     main: { title: "Hospitalizovaných", value: "", delta: "" },
+    subValues: [],
+  };
+  let vaccinatedCard: SubValueSummaryCard = {
+    main: { title: "Očkovaných", value: "", delta: "" },
     subValues: [],
   };
 
@@ -69,7 +74,6 @@
       getSummaryValue(lastLogs, InfectedLogDataKey.DEATHS, "Úmrtia"),
       getSummaryValue(lastLogs, InfectedLogDataKey.AG_POSITIVE, "Ag Pozitívnych"),
       getSummaryValue(lastLogs, InfectedLogDataKey.AG_TESTS, "Ag testovaných"),
-      getSummaryValue(lastLogs, InfectedLogDataKey.VACCINATED, "Očkovaných"),
       getSummaryValue(lastLogs, InfectedLogDataKey.CURED, "Vyliečených"),
       getActiveSummaryValue(lastLogs),
     ];
@@ -94,6 +98,20 @@
           lastLogs,
           InfectedLogDataKey.CONFIRMED_HOSPITALIZED_VENTILATION,
           "Na ventilácií:"
+        ),
+      ],
+    };
+    vaccinatedCard = {
+      main: getSummaryValue(
+        lastLogs,
+        InfectedLogDataKey.VACCINATED,
+        "Očkovaných"
+      ),
+      subValues: [
+        getSummaryValue(
+          lastLogs,
+          InfectedLogDataKey.VACCINATED_2ND_DOSE,
+          "2. dávka:"
         ),
       ],
     };
@@ -152,32 +170,8 @@
           </div>
         </div>
       {/each}
-      <div class="column col-4 col-md-12 my-2">
-        <div class="card h-100 text-center">
-          <div class="card-header">
-            <div class="card-title h6">{hospitalizedCard.main.title}</div>
-          </div>
-          <div class="card-body">
-            <div class="card-content flex-column h-100">
-              <div class="pb-2">
-                <h4 class="d-inline">{hospitalizedCard.main.value}</h4>
-                <small class="text-muted">{hospitalizedCard.main.delta}</small>
-              </div>
-              <table class="text-left">
-                {#each hospitalizedCard.subValues as value}
-                  <tr>
-                    <td class="pr-1">{value.title}</td>
-                    <td>
-                      {value.value}
-                      <small class="text-muted">{value.delta}</small>
-                    </td>
-                  </tr>
-                {/each}
-              </table>
-            </div>
-          </div>
-        </div>
-      </div>
+      <SubValueCard card="{vaccinatedCard}"/>
+      <SubValueCard card="{hospitalizedCard}"/>
     </div>
   </ScrollableSection>
 </div>

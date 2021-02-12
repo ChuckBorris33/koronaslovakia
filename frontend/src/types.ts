@@ -9,6 +9,7 @@ export enum InfectedLogDataKey {
   CONFIRMED_HOSPITALIZED_ICU = "confirmed_hospitalized_icu",
   CONFIRMED_HOSPITALIZED_VENTILATION = "confirmed_hospitalized_ventilation",
   VACCINATED = "vaccinated",
+  VACCINATED_2ND_DOSE = "vaccinated_2nd_dose",
   AG_TESTS = "ag_tests",
   AG_POSITIVE = "ag_positive",
 }
@@ -30,6 +31,7 @@ export type InfectedLog = {
   [InfectedLogDataKey.CONFIRMED_HOSPITALIZED_ICU]: number;
   [InfectedLogDataKey.CONFIRMED_HOSPITALIZED_VENTILATION]: number;
   [InfectedLogDataKey.VACCINATED]: number;
+  [InfectedLogDataKey.VACCINATED_2ND_DOSE]: number;
   [InfectedLogDataKey.AG_TESTS]: number;
   [InfectedLogDataKey.AG_POSITIVE]: number;
 };
@@ -72,3 +74,9 @@ export type SortValue = {
   sortColumnKey: string;
   sortType: string;
 };
+
+
+export type SubValueSummaryCard = {
+  main: SummaryValue
+  subValues: SummaryValue[]
+}
