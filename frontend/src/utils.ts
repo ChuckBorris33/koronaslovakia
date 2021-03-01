@@ -106,22 +106,6 @@ export function getSummaryValue(
   };
 }
 
-export function getActiveSummaryValue(lastLogs: InfectedLog[]): SummaryValue {
-  const lastActive: number =
-    lastLogs[0][InfectedLogDataKey.INFECTED] -
-    lastLogs[0][InfectedLogDataKey.DEATHS] -
-    lastLogs[0][InfectedLogDataKey.CURED];
-  const beforeActive: number =
-    lastLogs[1][InfectedLogDataKey.INFECTED] -
-    lastLogs[1][InfectedLogDataKey.DEATHS] -
-    lastLogs[1][InfectedLogDataKey.CURED];
-  return {
-    title: "Aktívnych",
-    value: formatNumber(lastActive),
-    delta: formatSummaryDelta(lastActive - beforeActive),
-  };
-}
-
 export function getInfectedChartRows(
   logs: InfectedLog[],
   timespan: number
@@ -141,12 +125,9 @@ export function getInfectedChartRows(
       return [
         dateString,
         item[InfectedLogDataKey.INFECTED],
-        item[InfectedLogDataKey.INFECTED] -
-          item[InfectedLogDataKey.CURED] -
-          item[InfectedLogDataKey.DEATHS],
       ];
     });
-  return [["Dátum", "Nakazených", "Aktívnych"], ...data];
+  return [["Dátum", "Nakazených"], ...data];
 }
 
 export function getOutcomeChartRows(
@@ -156,7 +137,7 @@ export function getOutcomeChartRows(
   const data = logs
     .filter(
       (item) =>
-        item[InfectedLogDataKey.CURED] || item[InfectedLogDataKey.DEATHS]
+        item[InfectedLogDataKey.DEATHS]
     )
     .filter((item) => {
       if (timespan < 0) {
@@ -170,11 +151,10 @@ export function getOutcomeChartRows(
       const date = new Date(item.date);
       return [
         format(date, "yyyy-MM-dd"),
-        item[InfectedLogDataKey.CURED],
         item[InfectedLogDataKey.DEATHS],
       ];
     });
-  return [["Dátum", "Vyliečení", "Úmrtia"], ...data];
+  return [["Dátum", "Úmrtia"], ...data];
 }
 
 export function getHospitalizedChartRows(

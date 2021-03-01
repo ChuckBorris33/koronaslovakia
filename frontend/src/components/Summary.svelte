@@ -5,7 +5,6 @@
   import {
     formatNumber,
     getSummaryValue,
-    getActiveSummaryValue,
     getChartConfig,
     getTooltipWithDeltaFormatter,
   } from "../utils";
@@ -28,10 +27,6 @@
   let simpleCards: SummaryValue[] = [];
   let hospitalizedCard: SubValueSummaryCard = {
     main: { title: "Hospitalizovaných", value: "", delta: "" },
-    subValues: [],
-  };
-  let vaccinatedCard: SubValueSummaryCard = {
-    main: { title: "Očkovaných", value: "", delta: "" },
     subValues: [],
   };
 
@@ -71,11 +66,19 @@
     simpleCards = [
       getSummaryValue(lastLogs, InfectedLogDataKey.INFECTED, "PCR pozitívnych"),
       getSummaryValue(lastLogs, InfectedLogDataKey.TESTS, "PCR testovaných"),
-      getSummaryValue(lastLogs, InfectedLogDataKey.DEATHS, "Úmrtia"),
+      getSummaryValue(
+        lastLogs,
+        InfectedLogDataKey.VACCINATED,
+        "Očkovaných"
+      ),
       getSummaryValue(lastLogs, InfectedLogDataKey.AG_POSITIVE, "Ag Pozitívnych"),
       getSummaryValue(lastLogs, InfectedLogDataKey.AG_TESTS, "Ag testovaných"),
-      getSummaryValue(lastLogs, InfectedLogDataKey.CURED, "Vyliečených"),
-      getActiveSummaryValue(lastLogs),
+      getSummaryValue(
+        lastLogs,
+        InfectedLogDataKey.VACCINATED_2ND_DOSE,
+        "Očkovaných 2. dávkou:"
+      ),
+      getSummaryValue(lastLogs, InfectedLogDataKey.DEATHS, "Úmrtia"),
     ];
     hospitalizedCard = {
       main: getSummaryValue(
@@ -98,20 +101,6 @@
           lastLogs,
           InfectedLogDataKey.CONFIRMED_HOSPITALIZED_VENTILATION,
           "Na ventilácií:"
-        ),
-      ],
-    };
-    vaccinatedCard = {
-      main: getSummaryValue(
-        lastLogs,
-        InfectedLogDataKey.VACCINATED,
-        "Očkovaných"
-      ),
-      subValues: [
-        getSummaryValue(
-          lastLogs,
-          InfectedLogDataKey.VACCINATED_2ND_DOSE,
-          "2. dávka:"
         ),
       ],
     };
@@ -170,8 +159,7 @@
           </div>
         </div>
       {/each}
-      <SubValueCard card="{vaccinatedCard}"/>
-      <SubValueCard card="{hospitalizedCard}"/>
+      <SubValueCard colClass="col-8" card="{hospitalizedCard}"/>
     </div>
   </ScrollableSection>
 </div>

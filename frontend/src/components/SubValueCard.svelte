@@ -1,4 +1,4 @@
-<div class="column col-4 col-md-12 my-2">
+<div class="{colClass + ' column col-md-12 my-2'}">
     <div class="card h-100 text-center">
         <div class="card-header">
         <div class="card-title h6">{card.main.title}</div>
@@ -29,4 +29,5 @@
     import type { SubValueSummaryCard } from "../types"
 
     export let card: SubValueSummaryCard
+    export let colClass: string = "col-4"
 </script>

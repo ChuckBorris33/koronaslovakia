@@ -68,10 +68,6 @@ def get_korona_gov_data(
                 get_element_with_comment(c, "REPLACE:koronastats-lab-tests").text,
                 last_log.tests,
             )
-            cured = _normalize_number(
-                get_element_with_comment(c, "REPLACE:koronastats-cured").text,
-                last_log.cured,
-            )
             deaths = _normalize_number(
                 get_element_with_comment(c, "REPLACE:koronastats-deceased").text,
                 last_log.deaths,
@@ -134,7 +130,7 @@ def get_korona_gov_data(
             )
             db.add_corona_log(
                 infected=infected,
-                cured=cured,
+                cured=last_log.cured,
                 tests=tested,
                 deaths=deaths,
                 log_date=updated_at,
