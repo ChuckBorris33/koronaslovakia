@@ -13,7 +13,7 @@
 
   import type { SummaryValue } from "../types";
   import { ScrollableSection } from "@beyonk/svelte-scrollspy";
-  import SubValueCard from "./SubValueCard.svelte"
+  import SubValueCard from "./SubValueCard.svelte";
   import type { ChartConfiguration, PrimitiveArray } from "c3";
 
   export let id: string = "";
@@ -66,12 +66,12 @@
     simpleCards = [
       getSummaryValue(lastLogs, InfectedLogDataKey.INFECTED, "PCR pozitívnych"),
       getSummaryValue(lastLogs, InfectedLogDataKey.TESTS, "PCR testovaných"),
+      getSummaryValue(lastLogs, InfectedLogDataKey.VACCINATED, "Očkovaných"),
       getSummaryValue(
         lastLogs,
-        InfectedLogDataKey.VACCINATED,
-        "Očkovaných"
+        InfectedLogDataKey.AG_POSITIVE,
+        "Ag Pozitívnych"
       ),
-      getSummaryValue(lastLogs, InfectedLogDataKey.AG_POSITIVE, "Ag Pozitívnych"),
       getSummaryValue(lastLogs, InfectedLogDataKey.AG_TESTS, "Ag testovaných"),
       getSummaryValue(
         lastLogs,
@@ -159,7 +159,7 @@
           </div>
         </div>
       {/each}
-      <SubValueCard colClass="col-8" card="{hospitalizedCard}"/>
+      <SubValueCard colClass="col-8" card={hospitalizedCard} />
     </div>
   </ScrollableSection>
 </div>

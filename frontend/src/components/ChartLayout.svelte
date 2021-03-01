@@ -22,7 +22,8 @@
         role="radiogroup"
         tabindex="-1"
         class="btn-group"
-        id={`timespan_options_${id}`}>
+        id={`timespan_options_${id}`}
+      >
         {#each options as option, index}
           <button
             class="btn btn-sm btn-no-focus"

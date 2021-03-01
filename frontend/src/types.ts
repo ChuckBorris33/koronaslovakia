@@ -75,8 +75,7 @@ export type SortValue = {
   sortType: string;
 };
 
-
 export type SubValueSummaryCard = {
-  main: SummaryValue
-  subValues: SummaryValue[]
-}
+  main: SummaryValue;
+  subValues: SummaryValue[];
+};

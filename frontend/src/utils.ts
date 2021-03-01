@@ -122,10 +122,7 @@ export function getInfectedChartRows(
     .map((item) => {
       const date = new Date(item.date);
       const dateString: string = format(date, "yyyy-MM-dd");
-      return [
-        dateString,
-        item[InfectedLogDataKey.INFECTED],
-      ];
+      return [dateString, item[InfectedLogDataKey.INFECTED]];
     });
   return [["Dátum", "Nakazených"], ...data];
 }
@@ -135,10 +132,7 @@ export function getOutcomeChartRows(
   timespan: number
 ): PrimitiveArray[] {
   const data = logs
-    .filter(
-      (item) =>
-        item[InfectedLogDataKey.DEATHS]
-    )
+    .filter((item) => item[InfectedLogDataKey.DEATHS])
     .filter((item) => {
       if (timespan < 0) {
         return true;
@@ -149,10 +143,7 @@ export function getOutcomeChartRows(
     })
     .map((item) => {
       const date = new Date(item.date);
-      return [
-        format(date, "yyyy-MM-dd"),
-        item[InfectedLogDataKey.DEATHS],
-      ];
+      return [format(date, "yyyy-MM-dd"), item[InfectedLogDataKey.DEATHS]];
     });
   return [["Dátum", "Úmrtia"], ...data];
 }
@@ -162,12 +153,14 @@ export function getHospitalizedChartRows(
   timespan: number
 ): PrimitiveArray[] {
   const firstNonEmptyId = logs.findIndex((item) => {
-    return item[InfectedLogDataKey.HOSPITALIZED] 
-    || item[InfectedLogDataKey.CONFIRMED_HOSPITALIZED] 
-    || item[InfectedLogDataKey.CONFIRMED_HOSPITALIZED_ICU]
-    || item[InfectedLogDataKey.CONFIRMED_HOSPITALIZED_VENTILATION] 
-  })
-  const nonEmptyLogs = logs.slice(firstNonEmptyId)
+    return (
+      item[InfectedLogDataKey.HOSPITALIZED] ||
+      item[InfectedLogDataKey.CONFIRMED_HOSPITALIZED] ||
+      item[InfectedLogDataKey.CONFIRMED_HOSPITALIZED_ICU] ||
+      item[InfectedLogDataKey.CONFIRMED_HOSPITALIZED_VENTILATION]
+    );
+  });
+  const nonEmptyLogs = logs.slice(firstNonEmptyId);
   const data = nonEmptyLogs
     .filter((item) => {
       if (timespan < 0) {
@@ -180,7 +173,7 @@ export function getHospitalizedChartRows(
     .map((item) => {
       const date = new Date(item.date);
       return [
-        format(date, "yyyy-MM-dd"), 
+        format(date, "yyyy-MM-dd"),
         item[InfectedLogDataKey.HOSPITALIZED],
         item[InfectedLogDataKey.CONFIRMED_HOSPITALIZED],
         item[InfectedLogDataKey.CONFIRMED_HOSPITALIZED_ICU],
@@ -195,7 +188,7 @@ export function getHospitalizedChartRows(
       "Na JIS",
       "Na ventilácií",
     ],
-     ...data,
+    ...data,
   ];
 }
 
@@ -203,8 +196,10 @@ export function getVaccinatedChartRows(
   logs: InfectedLog[],
   timespan: number
 ): PrimitiveArray[] {
-  const firstNonEmptyId = logs.findIndex((item) => item[InfectedLogDataKey.VACCINATED])
-  const nonEmptyLogs = logs.slice(firstNonEmptyId)
+  const firstNonEmptyId = logs.findIndex(
+    (item) => item[InfectedLogDataKey.VACCINATED]
+  );
+  const nonEmptyLogs = logs.slice(firstNonEmptyId);
   const data = nonEmptyLogs
     .filter((item) => {
       if (timespan < 0) {
@@ -216,9 +211,16 @@ export function getVaccinatedChartRows(
     })
     .map((item) => {
       const date = new Date(item.date);
-      return [format(date, "yyyy-MM-dd"), item[InfectedLogDataKey.VACCINATED], item[InfectedLogDataKey.VACCINATED_2ND_DOSE]];
+      return [
+        format(date, "yyyy-MM-dd"),
+        item[InfectedLogDataKey.VACCINATED],
+        item[InfectedLogDataKey.VACCINATED_2ND_DOSE],
+      ];
     });
-  return [["Dátum", "Počet zaočkovaných", "Počet zaočkovaných 2. dávkou"], ...data];
+  return [
+    ["Dátum", "Počet zaočkovaných", "Počet zaočkovaných 2. dávkou"],
+    ...data,
+  ];
 }
 
 export function getTestedPerDayChartRows(
@@ -238,8 +240,9 @@ export function getTestedPerDayChartRows(
       const date = new Date(item.date);
       return [
         format(date, "yyyy-MM-dd"),
-        item.tests_increase != 0 ?
-            item.infected_increase / item.tests_increase : 0,
+        item.tests_increase != 0
+          ? item.infected_increase / item.tests_increase
+          : 0,
         item.infected_increase,
         item.tests_increase - item.infected_increase,
       ];

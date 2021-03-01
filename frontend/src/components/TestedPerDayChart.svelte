@@ -22,7 +22,7 @@
     id: string,
     index: number
   ): string {
-    if(id == "Percento pozitívnych") {
+    if (id == "Percento pozitívnych") {
       const percentage = Math.round(value * 10000) / 100;
       return `${percentage}%`;
     }
@@ -38,7 +38,7 @@
       if (timespan != 14) {
         return "";
       }
-      return formatPercent(value)
+      return formatPercent(value);
     }
     if (timespan === -1) {
       return "";
@@ -59,13 +59,13 @@
         },
         axes: {
           "Percento pozitívnych": "y2",
-          "Pozitívne": "y",
-          "Negatívne": "y",
+          Pozitívne: "y",
+          Negatívne: "y",
         },
         colors: {
           "Percento pozitívnych": "#5f8103",
-          "Pozitívne": "#2D7DD2",
-          "Negatívne": "#EA7317",
+          Pozitívne: "#2D7DD2",
+          Negatívne: "#EA7317",
         },
         rows,
         labels: { format: labelsFormatter },
@@ -90,9 +90,9 @@
             bottom: 0,
           },
           tick: {
-            format: formatPercent
+            format: formatPercent,
           },
-        }
+        },
       },
     });
   }

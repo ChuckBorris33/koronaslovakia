@@ -110,9 +110,9 @@
         <form class="form">
           <div class="form-group columns col-gapless py-2">
             <div class="column col-12 text-assistive">
-              <label
-                for="infectedByLocationFilter"
-                class="form-inline">Hľadať</label>
+              <label for="infectedByLocationFilter" class="form-inline"
+                >Hľadať</label
+              >
             </div>
             <div class="column col-4 col-sm-12">
               <div class="has-icon-right">
@@ -122,7 +122,8 @@
                   class="form-input"
                   placeholder="Hľadať"
                   readonly={false}
-                  on:input={(e) => setFilter(e.target.value)} />
+                  on:input={(e) => setFilter(e.target.value)}
+                />
                 {#if loading}
                   <i aria-hidden="true" class="form-icon loading" />
                 {/if}
@@ -139,7 +140,8 @@
             <th>
               <div
                 class="d-flex c-hand justify-content-between"
-                on:click={() => setSort(key)}>
+                on:click={() => setSort(key)}
+              >
                 <div>{columns[key].title}</div>
                 <div class={getSortIconClass(key)}>
                   <Icon icon={getSortIcon(key)} />

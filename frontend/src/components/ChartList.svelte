@@ -11,22 +11,25 @@
   import InfectedByLocationTable from "./InfectedByLocationTable.svelte";
   import { SectionHeader } from "@beyonk/svelte-scrollspy";
   import type { PrimitiveArray } from "c3";
-  import type {InfectedLog} from "../types"
+  import type { InfectedLog } from "../types";
 
   const charts: {
     component: any;
     attributes: {
       id: string;
       title: string;
-      chartDataGetter?: (logs: InfectedLog[], timespan: number) => PrimitiveArray[]
-    }
+      chartDataGetter?: (
+        logs: InfectedLog[],
+        timespan: number
+      ) => PrimitiveArray[];
+    };
   }[] = [
     {
       component: Summary,
       attributes: {
         id: "summary",
         title: "Súhrn",
-      }
+      },
     },
     {
       component: LineChart,
@@ -34,7 +37,7 @@
         id: "infected-count",
         title: "Počet nakazených",
         chartDataGetter: getInfectedChartRows,
-      }
+      },
     },
     {
       component: LineChart,
@@ -56,7 +59,7 @@
       component: LineChart,
       attributes: {
         id: "outcome-count",
-        title: "Výsledky ochorenia",
+        title: "Úmrtia",
         chartDataGetter: getOutcomeChartRows,
       },
     },
@@ -83,7 +86,9 @@
       {#each charts as chart}
         <li class="nav-item">
           <SectionHeader id={chart.attributes.id}>
-            <a class="text-primary" href={`#${chart.attributes.id}`}> {chart.attributes.title} </a>
+            <a class="text-primary" href={`#${chart.attributes.id}`}>
+              {chart.attributes.title}
+            </a>
           </SectionHeader>
         </li>
       {/each}
@@ -91,7 +96,7 @@
   </div>
   <div class="column col-9 col-md-12">
     {#each charts as chart}
-      <svelte:component this={chart.component} {...chart.attributes}/>
+      <svelte:component this={chart.component} {...chart.attributes} />
     {/each}
   </div>
 </div>
