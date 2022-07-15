@@ -46,7 +46,7 @@
     "lodash": "^4.17.21",
     "postcss": "^8.2.10",
     "spectre.css": "^0.5.9",
-    "svelte": "^3.0.0",
+    "svelte": "^3.49.0",
     "upgrade": "^1.1.0"
   }
 }
